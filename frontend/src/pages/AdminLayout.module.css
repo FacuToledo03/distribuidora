@@ -1,0 +1,82 @@
+.layout { display: flex; min-height: calc(100vh - 64px); }
+
+.sidebar {
+  width: 220px;
+  background: var(--dark);
+  display: flex;
+  flex-direction: column;
+  padding: 16px 0;
+  flex-shrink: 0;
+  transition: width 0.2s;
+  position: sticky;
+  top: 64px;
+  height: calc(100vh - 64px);
+  overflow: hidden;
+}
+
+.sidebar.collapsed { width: 60px; }
+
+.collapseBtn {
+  position: absolute;
+  top: 12px;
+  right: 8px;
+  background: rgba(255,255,255,0.08);
+  border: none;
+  color: white;
+  width: 26px;
+  height: 26px;
+  border-radius: 6px;
+  font-size: 14px;
+  transition: background 0.2s;
+}
+.collapseBtn:hover { background: rgba(255,255,255,0.15); }
+
+.sidebarHeader { padding: 36px 16px 8px; }
+
+.adminLabel {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  color: rgba(255,255,255,0.35);
+}
+
+.nav { display: flex; flex-direction: column; gap: 2px; padding: 8px; flex: 1; }
+
+.navLink {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  color: rgba(255,255,255,0.6);
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.15s;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.navLink:hover { background: rgba(255,255,255,0.08); color: white; }
+.navLink.active { background: rgba(230,57,70,0.2); color: var(--brand); }
+
+.navIcon { font-size: 18px; flex-shrink: 0; }
+
+.backLink {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 20px;
+  margin: 8px;
+  border-radius: 10px;
+  color: rgba(255,255,255,0.4);
+  font-size: 13px;
+  border-top: 1px solid rgba(255,255,255,0.08);
+  transition: all 0.15s;
+  padding-top: 20px;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.backLink:hover { color: rgba(255,255,255,0.7); }
+
+.main { flex: 1; padding: 32px; min-width: 0; background: var(--bg); }

@@ -1,0 +1,11 @@
+python3 --version
+```
+
+Si te dice `Python 3.10.x` escribís adentro:
+```
+python-3.10.0
+```
+
+Si te dice `Python 3.12.x` escribís:
+```
+python-3.12.0

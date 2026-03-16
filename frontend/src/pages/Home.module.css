@@ -1,0 +1,244 @@
+.page { width: 100%; }
+
+/* ── Carrusel ── */
+.carrusel {
+  position: relative;
+  width: 100%;
+  height: 480px;
+  overflow: hidden;
+  background: var(--dark);
+}
+
+@media (max-width: 768px) { .carrusel { height: 300px; } }
+
+.slide {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  opacity: 0;
+  transition: opacity 0.7s ease;
+}
+
+.slideActive { opacity: 1; }
+
+.slideOverlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to right, rgba(0,0,0,0.65) 0%, rgba(0,0,0,0.2) 60%, transparent 100%);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 0 80px;
+  gap: 14px;
+}
+
+@media (max-width: 768px) { .slideOverlay { padding: 0 28px; } }
+
+.slideTitulo {
+  font-family: var(--font-heading);
+  font-size: clamp(22px, 4vw, 42px);
+  font-weight: 800;
+  color: white;
+  max-width: 560px;
+  line-height: 1.15;
+  text-shadow: 0 2px 12px rgba(0,0,0,0.3);
+}
+
+.slideSubtitulo {
+  font-size: clamp(13px, 2vw, 18px);
+  color: rgba(255,255,255,0.85);
+  max-width: 440px;
+}
+
+.slideCta {
+  background: var(--brand);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  padding: 12px 28px;
+  font-size: 15px;
+  font-weight: 700;
+  font-family: var(--font-heading);
+  cursor: pointer;
+  width: fit-content;
+  transition: all 0.2s;
+  margin-top: 6px;
+}
+
+.slideCta:hover {
+  background: var(--brand-dark);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(230,57,70,0.4);
+}
+
+/* Nav buttons */
+.navBtn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(255,255,255,0.15);
+  backdrop-filter: blur(6px);
+  border: 1px solid rgba(255,255,255,0.2);
+  color: white;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  font-size: 26px;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  line-height: 1;
+}
+
+.navBtn:hover { background: rgba(255,255,255,0.3); }
+.navPrev { left: 20px; }
+.navNext { right: 20px; }
+
+/* Dots */
+.dots {
+  position: absolute;
+  bottom: 18px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 8px;
+  z-index: 10;
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.4);
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s;
+  padding: 0;
+}
+
+.dotActive {
+  background: white;
+  width: 24px;
+  border-radius: 4px;
+}
+
+/* ── Sección categorías ── */
+.seccion { padding: 60px 0; background: var(--bg); }
+
+.seccionInner {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+.seccionTitulo {
+  font-size: 28px;
+  font-weight: 800;
+  color: var(--dark);
+  margin-bottom: 6px;
+  text-align: center;
+}
+
+.seccionSub {
+  color: var(--muted);
+  font-size: 15px;
+  text-align: center;
+  margin-bottom: 36px;
+}
+
+.catGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 16px;
+}
+
+.catCard {
+  background: white;
+  border: 2px solid var(--border);
+  border-radius: 16px;
+  padding: 24px 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+  position: relative;
+  overflow: hidden;
+}
+
+.catCard::before {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: var(--cat-color);
+  transform: scaleX(0);
+  transition: transform 0.2s;
+}
+
+.catCard:hover {
+  border-color: var(--cat-color);
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+}
+
+.catCard:hover::before { transform: scaleX(1); }
+
+.catIcon { font-size: 40px; }
+
+.catNombre {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--dark);
+  text-align: center;
+}
+
+/* ── Mapa ── */
+.mapaSeccion {
+  background: var(--bg);
+  padding: 60px 24px;
+}
+
+.mapaInner {
+  max-width: 900px;
+  margin: 0 auto;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 8px 40px rgba(0,0,0,0.13);
+  border: 1px solid var(--border);
+}
+
+.mapaTitulo {
+  background: #f5a623;
+  color: white;
+  font-family: var(--font-heading);
+  font-size: 18px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  padding: 14px 24px;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.mapaWrap {
+  width: 100%;
+  height: 360px;
+  display: block;
+}
+
+.mapaWrap iframe {
+  width: 100%;
+  height: 100%;
+  border: 0;
+  display: block;
+}
