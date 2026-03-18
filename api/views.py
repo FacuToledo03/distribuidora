@@ -5,11 +5,38 @@ from rest_framework.authtoken.models import Token
 from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
 from django.db import transaction
+from django.conf import settings
+import urllib.request
+import urllib.parse
+import threading
 from .models import Categoria, Producto, Pedido, DetallePedido, PerfilCliente
 from .serializers import (
     UserSerializer, CrearUsuarioSerializer, CategoriaSerializer,
     ProductoSerializer, PedidoSerializer, CrearPedidoSerializer
 )
+
+
+def notificar_whatsapp(pedido_id):
+    try:
+        pedido = Pedido.objects.prefetch_related('detalles__producto').select_related('cliente').get(id=pedido_id)
+        numero = getattr(settings, 'WHATSAPP_ADMIN_NUMERO', '')
+        api_key = getattr(settings, 'WHATSAPP_CALLMEBOT_KEY', '')
+        if not numero or not api_key:
+            return
+        items_texto = ', '.join([
+            f"{d.cantidad}x {d.producto.nombre}"
+            for d in pedido.detalles.all()
+        ])
+        mensaje = (
+            f"Nuevo pedido #{pedido.id} - "
+            f"Cliente: {pedido.cliente.username} - "
+            f"Productos: {items_texto} - "
+            f"Total: ${pedido.total:,.0f}"
+        )
+        url = f"https://api.callmebot.com/whatsapp.php?phone={numero}&text={urllib.parse.quote(mensaje)}&apikey={api_key}"
+        urllib.request.urlopen(url, timeout=8)
+    except Exception:
+        pass
 
 
 class EsAdmin(permissions.BasePermission):
@@ -143,7 +170,6 @@ def pedidos_list(request):
             pedidos = Pedido.objects.filter(cliente=request.user).prefetch_related('detalles__producto')
         return Response(PedidoSerializer(pedidos, many=True).data)
 
-    # POST: crear pedido
     serializer = CrearPedidoSerializer(data=request.data)
     if not serializer.is_valid():
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -170,6 +196,9 @@ def pedidos_list(request):
         pedido.total = total
         pedido.save()
 
+    # Notificar al admin por WhatsApp en segundo plano
+    threading.Thread(target=notificar_whatsapp, args=(pedido.id,), daemon=True).start()
+
     return Response(PedidoSerializer(pedido).data, status=status.HTTP_201_CREATED)
 
 
@@ -186,7 +215,6 @@ def pedido_detail(request, pk):
     if request.method == 'GET':
         return Response(PedidoSerializer(pedido).data)
 
-    # PUT: actualizar estado (solo admin)
     if not (request.user.is_staff or request.user.is_superuser):
         return Response({'error': 'Sin permisos.'}, status=status.HTTP_403_FORBIDDEN)
 
@@ -204,7 +232,7 @@ def pedido_detail(request, pk):
 @api_view(['GET'])
 @permission_classes([EsAdmin])
 def dashboard_stats(request):
-    from django.db.models import Sum, Count
+    from django.db.models import Sum
     total_productos = Producto.objects.filter(activo=True).count()
     total_clientes = User.objects.filter(is_superuser=False, is_staff=False).count()
     total_pedidos = Pedido.objects.count()

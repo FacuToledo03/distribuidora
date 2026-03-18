@@ -21,7 +21,7 @@ export default function Navbar() {
   return (
     <nav className={styles.navbar}>
       <div className={styles.inner}>
-        <Link to="/" className={styles.logo}>
+        <Link to={esAdmin ? '/admin' : '/home'} className={styles.logo}>
           <span className={styles.logoIcon}>📦</span>
           <span className={styles.logoText}>Distribuidora</span>
         </Link>
@@ -33,9 +33,11 @@ export default function Navbar() {
           <Link to="/pedidos" className={`${styles.link} ${isActive('/pedidos') ? styles.active : ''}`}>
             Mis pedidos
           </Link>
-          <Link to="/contacto" className={`${styles.link} ${isActive('/contacto') ? styles.active : ''}`}>
-            Contacto
-          </Link>
+          {!esAdmin && (
+            <Link to="/contacto" className={`${styles.link} ${isActive('/contacto') ? styles.active : ''}`}>
+              Contacto
+            </Link>
+          )}
           {esAdmin && (
             <Link to="/admin" className={`${styles.link} ${styles.adminLink} ${location.pathname.startsWith('/admin') ? styles.active : ''}`}>
               ⚙ Admin

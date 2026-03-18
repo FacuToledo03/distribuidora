@@ -16,7 +16,7 @@ export default function Login() {
     setLoading(true);
     try {
       const user = await login(form.username, form.password);
-      navigate(user.es_admin || user.is_staff ? '/admin' : '/productos');
+      navigate(user.es_admin || user.is_staff ? '/admin' : '/home');
     } catch (err) {
       setError(err.response?.data?.error || 'Error al iniciar sesión.');
     } finally {
