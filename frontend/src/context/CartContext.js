@@ -1,9 +1,21 @@
-import React, { createContext, useContext, useState, useCallback } from 'react';
+import React, { createContext, useContext, useState, useCallback, useEffect } from 'react';
 
 const CartContext = createContext(null);
 
 export function CartProvider({ children }) {
-  const [items, setItems] = useState([]);
+  const [items, setItems] = useState(() => {
+    try {
+      const saved = localStorage.getItem('carrito');
+      return saved ? JSON.parse(saved) : [];
+    } catch {
+      return [];
+    }
+  });
+
+  // Guardar en localStorage cada vez que cambia el carrito
+  useEffect(() => {
+    localStorage.setItem('carrito', JSON.stringify(items));
+  }, [items]);
 
   const agregar = useCallback((producto, cantidad = 1) => {
     setItems(prev => {
@@ -29,7 +41,10 @@ export function CartProvider({ children }) {
     }
   }, []);
 
-  const limpiar = useCallback(() => setItems([]), []);
+  const limpiar = useCallback(() => {
+    setItems([]);
+    localStorage.removeItem('carrito');
+  }, []);
 
   const total = items.reduce((acc, i) => acc + i.producto.precio * i.cantidad, 0);
   const cantidadItems = items.reduce((acc, i) => acc + i.cantidad, 0);
