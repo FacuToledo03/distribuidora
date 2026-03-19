@@ -5,30 +5,40 @@ import { useCart } from '../context/CartContext';
 import styles from './Productos.module.css';
 
 function ProductoCard({ producto }) {
-  const { agregar, items } = useCart();
+  const { agregar, actualizarCantidad, quitar, items } = useCart();
   const navigate = useNavigate();
-  const [feedback, setFeedback] = useState(false);
 
   const enCarrito = items.find(i => i.producto.id === producto.id);
-
-  const handleAgregar = () => {
-    agregar(producto);
-    setFeedback(true);
-    setTimeout(() => setFeedback(false), 1200);
-  };
+  const cantidad = enCarrito ? enCarrito.cantidad : 0;
 
   const sinStock = producto.stock === 0;
   const stockBajo = producto.stock > 0 && producto.stock <= 5;
 
+  const handleAgregar = () => agregar(producto, 1);
+
+  const handleSumar = (e) => {
+    e.stopPropagation();
+    if (cantidad < producto.stock) actualizarCantidad(producto.id, cantidad + 1);
+  };
+
+  const handleRestar = (e) => {
+    e.stopPropagation();
+    if (cantidad > 1) actualizarCantidad(producto.id, cantidad - 1);
+    else quitar(producto.id);
+  };
+
   return (
     <div className={`${styles.card} ${sinStock ? styles.sinStock : ''}`}>
-      <div className={styles.imgBox} onClick={() => navigate(`/productos/${producto.id}`)} style={{ cursor: "pointer" }}>
+      <div className={styles.imgBox} onClick={() => navigate(`/productos/${producto.id}`)}>
         {producto.imagen_url
           ? <img src={producto.imagen_url} alt={producto.nombre} className={styles.img} />
           : <div className={styles.noImg}>📦</div>
         }
         {producto.categoria_nombre && (
           <span className={styles.catBadge}>{producto.categoria_nombre}</span>
+        )}
+        {stockBajo && !sinStock && (
+          <span className={styles.stockAlerta}>⚠ Últimas {producto.stock}</span>
         )}
       </div>
 
@@ -37,20 +47,32 @@ function ProductoCard({ producto }) {
         {producto.descripcion && (
           <p className={styles.desc}>{producto.descripcion}</p>
         )}
-        <div className={styles.footer}>
-          <div>
-            <span className={styles.precio}>${Number(producto.precio).toLocaleString('es-AR')}</span>
-            {sinStock && <span className={styles.stockTag} style={{background:'rgba(239,68,68,0.12)',color:'#ef4444'}}>Sin stock</span>}
-            {stockBajo && <span className={styles.stockTag} style={{background:'rgba(245,158,11,0.12)',color:'#f59e0b'}}>Stock: {producto.stock}</span>}
-          </div>
-          <button
-            className={`${styles.addBtn} ${feedback ? styles.added : ''}`}
-            onClick={handleAgregar}
-            disabled={sinStock}
-          >
-            {feedback ? '✓ Agregado' : enCarrito ? `+1 (${enCarrito.cantidad})` : '+ Agregar'}
-          </button>
+
+        <div className={styles.precioWrap}>
+          <span className={styles.precio}>
+            ${Number(producto.precio).toLocaleString('es-AR')}
+          </span>
+          <span className={styles.precioUnit}>/ unidad</span>
         </div>
+
+        {sinStock ? (
+          <div className={styles.sinStockBtn}>Sin stock</div>
+        ) : cantidad === 0 ? (
+          <button className={styles.addBtn} onClick={handleAgregar}>
+            + Agregar al carrito
+          </button>
+        ) : (
+          <div className={styles.cantidadControl}>
+            <button className={styles.ctrlBtn} onClick={handleRestar}>−</button>
+            <span className={styles.ctrlNum}>{cantidad}</span>
+            <button
+              className={styles.ctrlBtn}
+              onClick={handleSumar}
+              disabled={cantidad >= producto.stock}
+            >+</button>
+            <span className={styles.ctrlAplicar}>en carrito</span>
+          </div>
+        )}
       </div>
     </div>
   );
