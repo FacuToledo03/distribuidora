@@ -9,11 +9,11 @@
 .inner {
   max-width: 1280px;
   margin: 0 auto;
-  padding: 0 24px;
+  padding: 0 20px;
   height: 64px;
   display: flex;
   align-items: center;
-  gap: 32px;
+  gap: 20px;
 }
 
 .logo {
@@ -23,16 +23,17 @@
   flex-shrink: 0;
 }
 
-.logoIcon { font-size: 24px; }
+.logoIcon { font-size: 22px; }
 
 .logoText {
   font-family: var(--font-heading);
-  font-size: 20px;
+  font-size: 18px;
   font-weight: 800;
   color: var(--white);
   letter-spacing: -0.5px;
 }
 
+/* Desktop links */
 .links {
   display: flex;
   align-items: center;
@@ -41,25 +42,25 @@
 }
 
 .link {
-  padding: 6px 14px;
+  padding: 6px 12px;
   border-radius: 8px;
   color: rgba(255,255,255,0.65);
   font-size: 14px;
   font-weight: 500;
   transition: all 0.2s;
+  white-space: nowrap;
 }
 
 .link:hover { background: rgba(255,255,255,0.08); color: white; }
-
 .link.active { background: rgba(230,57,70,0.2); color: var(--brand); }
-
 .adminLink { color: rgba(255,200,100,0.8) !important; }
 .adminLink.active { background: rgba(245,158,11,0.15) !important; color: var(--warning) !important; }
 
 .actions {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
+  margin-left: auto;
 }
 
 .cartBtn {
@@ -75,19 +76,18 @@
 
 .badge {
   position: absolute;
-  top: -4px;
-  right: -4px;
+  top: -4px; right: -4px;
   background: var(--brand);
   color: white;
-  font-size: 11px;
+  font-size: 10px;
   font-weight: 700;
-  min-width: 18px;
-  height: 18px;
+  min-width: 17px;
+  height: 17px;
   border-radius: 9px;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 0 4px;
+  padding: 0 3px;
 }
 
 .userMenu { position: relative; }
@@ -99,17 +99,17 @@
   background: rgba(255,255,255,0.07);
   border: 1px solid rgba(255,255,255,0.12);
   border-radius: 10px;
-  padding: 6px 12px;
+  padding: 6px 10px;
   color: white;
   font-size: 14px;
   transition: all 0.2s;
+  cursor: pointer;
 }
 
 .userBtn:hover { background: rgba(255,255,255,0.12); }
 
 .avatar {
-  width: 28px;
-  height: 28px;
+  width: 28px; height: 28px;
   background: var(--brand);
   border-radius: 50%;
   display: flex;
@@ -118,9 +118,15 @@
   font-weight: 700;
   font-size: 13px;
   text-transform: uppercase;
+  flex-shrink: 0;
 }
 
-.userName { max-width: 100px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.userName {
+  max-width: 90px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
 
 .chevron { font-size: 10px; opacity: 0.6; }
 
@@ -135,6 +141,7 @@
   overflow: hidden;
   box-shadow: var(--shadow-lg);
   animation: fadeIn 0.15s ease;
+  z-index: 200;
 }
 
 @keyframes fadeIn {
@@ -163,6 +170,66 @@
   font-weight: 500;
   text-align: left;
   transition: background 0.2s;
+  cursor: pointer;
 }
 
 .logoutBtn:hover { background: rgba(230,57,70,0.12); }
+
+/* Hamburger menu button — solo mobile */
+.menuToggle {
+  display: none;
+  background: none;
+  border: none;
+  color: white;
+  font-size: 24px;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 6px;
+  transition: background 0.2s;
+}
+.menuToggle:hover { background: rgba(255,255,255,0.08); }
+
+/* Mobile menu */
+.mobileMenu {
+  display: none;
+  flex-direction: column;
+  background: var(--dark-2);
+  border-top: 1px solid rgba(255,255,255,0.08);
+  padding: 12px 20px 16px;
+  gap: 4px;
+  animation: slideDown 0.2s ease;
+}
+
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.mobileLink {
+  display: block;
+  padding: 10px 14px;
+  border-radius: 8px;
+  color: rgba(255,255,255,0.7);
+  font-size: 15px;
+  font-weight: 500;
+  transition: all 0.15s;
+}
+
+.mobileLink:hover { background: rgba(255,255,255,0.07); color: white; }
+.mobileLink.active { background: rgba(230,57,70,0.2); color: var(--brand); }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 768px) {
+  .links { display: none; }
+  .menuToggle { display: flex; align-items: center; }
+  .mobileMenu { display: flex; }
+  .userName { display: none; }
+  .chevron { display: none; }
+  .userBtn { padding: 6px; border-radius: 50%; }
+  .logoText { font-size: 16px; }
+}
+
+@media (max-width: 480px) {
+  .inner { gap: 12px; padding: 0 14px; }
+  .logoIcon { font-size: 20px; }
+}

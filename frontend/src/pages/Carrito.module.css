@@ -189,3 +189,10 @@
   transition: all 0.2s;
 }
 .btn:hover { background: var(--brand-dark); }
+
+@media (max-width: 640px) {
+  .page { padding: 20px 16px; }
+  .item { flex-wrap: wrap; gap: 12px; }
+  .itemSubtotal { min-width: auto; }
+  .summary { position: static; }
+}

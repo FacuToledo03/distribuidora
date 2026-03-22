@@ -31,6 +31,9 @@
   .layout { grid-template-columns: 1fr; gap: 28px; }
 }
 
+/* Imagen */
+.imgSection {}
+
 .imgWrap {
   border-radius: 16px;
   overflow: hidden;
@@ -116,6 +119,7 @@
   color: var(--muted);
 }
 
+.stockInfo {}
 
 .stockTag {
   display: inline-block;
@@ -245,3 +249,16 @@
 }
 
 @keyframes spin { to { transform: rotate(360deg); } }
+
+@media (max-width: 768px) {
+  .page { padding: 20px 16px; }
+  .layout { grid-template-columns: 1fr; gap: 20px; }
+  .imgWrap { position: static; aspect-ratio: 1; max-height: 300px; }
+  .nombre { font-size: 22px; }
+  .precio { font-size: 30px; }
+  .addSection { padding: 16px; }
+}
+
+@media (max-width: 480px) {
+  .addSection { flex-direction: column; align-items: flex-start; gap: 16px; }
+}

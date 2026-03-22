@@ -10,13 +10,16 @@ export default function Navbar() {
   const navigate = useNavigate();
   const location = useLocation();
   const [menuOpen, setMenuOpen] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
 
   const handleLogout = async () => {
     await logout();
     navigate('/login');
+    setMobileOpen(false);
   };
 
   const isActive = (path) => location.pathname === path;
+  const closeMobile = () => setMobileOpen(false);
 
   return (
     <nav className={styles.navbar}>
@@ -26,22 +29,15 @@ export default function Navbar() {
           <span className={styles.logoText}>Distribuidora</span>
         </Link>
 
+        {/* Desktop links */}
         <div className={styles.links}>
-          <Link to="/productos" className={`${styles.link} ${isActive('/productos') ? styles.active : ''}`}>
-            Productos
-          </Link>
-          <Link to="/pedidos" className={`${styles.link} ${isActive('/pedidos') ? styles.active : ''}`}>
-            Mis pedidos
-          </Link>
+          <Link to="/productos" className={`${styles.link} ${isActive('/productos') ? styles.active : ''}`}>Productos</Link>
+          <Link to="/pedidos" className={`${styles.link} ${isActive('/pedidos') ? styles.active : ''}`}>Mis pedidos</Link>
           {!esAdmin && (
-            <Link to="/contacto" className={`${styles.link} ${isActive('/contacto') ? styles.active : ''}`}>
-              Contacto
-            </Link>
+            <Link to="/contacto" className={`${styles.link} ${isActive('/contacto') ? styles.active : ''}`}>Contacto</Link>
           )}
           {esAdmin && (
-            <Link to="/admin" className={`${styles.link} ${styles.adminLink} ${location.pathname.startsWith('/admin') ? styles.active : ''}`}>
-              ⚙ Admin
-            </Link>
+            <Link to="/admin" className={`${styles.link} ${styles.adminLink} ${location.pathname.startsWith('/admin') ? styles.active : ''}`}>⚙ Admin</Link>
           )}
         </div>
 
@@ -63,14 +59,35 @@ export default function Navbar() {
                   <strong>{user?.username}</strong>
                   <small>{esAdmin ? 'Administrador' : 'Cliente'}</small>
                 </div>
-                <button onClick={handleLogout} className={styles.logoutBtn}>
-                  Cerrar sesión
-                </button>
+                <button onClick={handleLogout} className={styles.logoutBtn}>Cerrar sesión</button>
               </div>
             )}
           </div>
+
+          {/* Hamburguesa mobile */}
+          <button className={styles.menuToggle} onClick={() => setMobileOpen(!mobileOpen)}>
+            {mobileOpen ? '✕' : '☰'}
+          </button>
         </div>
       </div>
+
+      {/* Mobile menu desplegable */}
+      {mobileOpen && (
+        <div className={styles.mobileMenu}>
+          <Link to="/home" className={`${styles.mobileLink} ${isActive('/home') ? styles.active : ''}`} onClick={closeMobile}>Inicio</Link>
+          <Link to="/productos" className={`${styles.mobileLink} ${isActive('/productos') ? styles.active : ''}`} onClick={closeMobile}>Productos</Link>
+          <Link to="/pedidos" className={`${styles.mobileLink} ${isActive('/pedidos') ? styles.active : ''}`} onClick={closeMobile}>Mis pedidos</Link>
+          {!esAdmin && (
+            <Link to="/contacto" className={`${styles.mobileLink} ${isActive('/contacto') ? styles.active : ''}`} onClick={closeMobile}>Contacto</Link>
+          )}
+          {esAdmin && (
+            <Link to="/admin" className={`${styles.mobileLink} ${location.pathname.startsWith('/admin') ? styles.active : ''}`} onClick={closeMobile}>⚙ Admin</Link>
+          )}
+          <button onClick={handleLogout} className={styles.mobileLink} style={{ background: 'none', border: 'none', textAlign: 'left', color: 'var(--brand)', fontWeight: 600, cursor: 'pointer', width: '100%' }}>
+            Cerrar sesión
+          </button>
+        </div>
+      )}
     </nav>
   );
 }

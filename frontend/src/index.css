@@ -23,12 +23,16 @@
   --font-body: 'Inter', sans-serif;
 }
 
+html { scroll-behavior: smooth; }
+
 body {
   font-family: var(--font-body);
   background: var(--bg);
   color: var(--dark);
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
 }
 
 h1, h2, h3, h4 { font-family: var(--font-heading); }
@@ -42,10 +46,10 @@ input, select, textarea {
   outline: none;
 }
 
-/* Scrollbar */
+img { max-width: 100%; display: block; }
+
 ::-webkit-scrollbar { width: 6px; }
 ::-webkit-scrollbar-track { background: var(--bg); }
 ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
 
-/* Utility */
 .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0,0,0,0); }

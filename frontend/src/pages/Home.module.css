@@ -242,3 +242,25 @@
   border: 0;
   display: block;
 }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 768px) {
+  .carrusel { height: 260px; }
+  .slideOverlay { padding: 0 24px; }
+  .slideCta { padding: 10px 20px; font-size: 14px; }
+  .navBtn { width: 36px; height: 36px; font-size: 20px; }
+  .navPrev { left: 10px; }
+  .navNext { right: 10px; }
+  .seccion { padding: 40px 0; }
+  .catGrid { grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 12px; }
+  .catIcon { font-size: 32px; }
+  .mapaSeccion { padding: 40px 16px; }
+  .mapaWrap { height: 280px; }
+}
+
+@media (max-width: 480px) {
+  .carrusel { height: 220px; }
+  .catGrid { grid-template-columns: repeat(3, 1fr); gap: 10px; }
+  .catCard { padding: 16px 10px; }
+  .catNombre { font-size: 12px; }
+}
