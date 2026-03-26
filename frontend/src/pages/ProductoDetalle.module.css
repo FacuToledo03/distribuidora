@@ -32,7 +32,6 @@
 }
 
 /* Imagen */
-.imgSection {}
 
 .imgWrap {
   border-radius: 16px;
@@ -119,7 +118,6 @@
   color: var(--muted);
 }
 
-.stockInfo {}
 
 .stockTag {
   display: inline-block;
