@@ -85,3 +85,18 @@ class PerfilCliente(models.Model):
     class Meta:
         verbose_name = "Perfil de Cliente"
         verbose_name_plural = "Perfiles de Clientes"
+
+
+class ItemCarrito(models.Model):
+    usuario = models.ForeignKey(User, on_delete=models.CASCADE, related_name='carrito')
+    producto = models.ForeignKey(Producto, on_delete=models.CASCADE)
+    cantidad = models.PositiveIntegerField(default=1)
+    actualizado_en = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        unique_together = ('usuario', 'producto')
+        verbose_name = "Item de Carrito"
+        verbose_name_plural = "Items de Carrito"
+
+    def __str__(self):
+        return f"{self.cantidad}x {self.producto.nombre} ({self.usuario.username})"

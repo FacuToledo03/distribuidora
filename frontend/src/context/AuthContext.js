@@ -20,6 +20,7 @@ export function AuthProvider({ children }) {
     try { await api.post('/auth/logout/'); } catch {}
     localStorage.removeItem('token');
     localStorage.removeItem('user');
+    localStorage.removeItem('carrito');
     setUser(null);
   }, []);
 

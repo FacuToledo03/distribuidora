@@ -1,5 +1,5 @@
 from rest_framework import viewsets, status, permissions
-from rest_framework.decorators import api_view, permission_classes, action
+from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework.authtoken.models import Token
 from django.contrib.auth import authenticate
@@ -9,7 +9,7 @@ from django.conf import settings
 import urllib.request
 import urllib.parse
 import threading
-from .models import Categoria, Producto, Pedido, DetallePedido, PerfilCliente
+from .models import Categoria, Producto, Pedido, DetallePedido, PerfilCliente, ItemCarrito
 from .serializers import (
     UserSerializer, CrearUsuarioSerializer, CategoriaSerializer,
     ProductoSerializer, PedidoSerializer, CrearPedidoSerializer
@@ -159,6 +159,59 @@ class ProductoViewSet(viewsets.ModelViewSet):
         return context
 
 
+# ─── CARRITO ─────────────────────────────────────────────────────────────────
+
+@api_view(['GET'])
+def carrito_get(request):
+    """Obtener el carrito del usuario"""
+    items = ItemCarrito.objects.filter(usuario=request.user).select_related('producto__categoria')
+    resultado = []
+    for item in items:
+        p = item.producto
+        imagen_url = None
+        if p.imagen:
+            imagen_url = request.build_absolute_uri(p.imagen.url)
+        resultado.append({
+            'producto': {
+                'id': p.id,
+                'nombre': p.nombre,
+                'precio': str(p.precio),
+                'stock': p.stock,
+                'imagen_url': imagen_url,
+                'categoria_nombre': p.categoria.nombre if p.categoria else None,
+            },
+            'cantidad': item.cantidad,
+        })
+    return Response(resultado)
+
+
+@api_view(['POST'])
+def carrito_sync(request):
+    """Sincronizar carrito completo desde el cliente"""
+    items = request.data.get('items', [])
+    ItemCarrito.objects.filter(usuario=request.user).delete()
+    for item in items:
+        try:
+            producto = Producto.objects.get(id=item['producto']['id'], activo=True)
+            cantidad = min(int(item['cantidad']), producto.stock)
+            if cantidad > 0:
+                ItemCarrito.objects.create(
+                    usuario=request.user,
+                    producto=producto,
+                    cantidad=cantidad
+                )
+        except (Producto.DoesNotExist, KeyError):
+            pass
+    return Response({'ok': True})
+
+
+@api_view(['DELETE'])
+def carrito_limpiar(request):
+    """Limpiar carrito del usuario"""
+    ItemCarrito.objects.filter(usuario=request.user).delete()
+    return Response({'ok': True})
+
+
 # ─── PEDIDOS ─────────────────────────────────────────────────────────────────
 
 @api_view(['GET', 'POST'])
@@ -195,8 +248,9 @@ def pedidos_list(request):
             total += precio * cantidad
         pedido.total = total
         pedido.save()
+        # Limpiar carrito del servidor al confirmar pedido
+        ItemCarrito.objects.filter(usuario=request.user).delete()
 
-    # Notificar al admin por WhatsApp en segundo plano
     threading.Thread(target=notificar_whatsapp, args=(pedido.id,), daemon=True).start()
 
     return Response(PedidoSerializer(pedido).data, status=status.HTTP_201_CREATED)

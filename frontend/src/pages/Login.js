@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { useCart } from '../context/CartContext';
 import styles from './Login.module.css';
 
 export default function Login() {
@@ -8,6 +9,7 @@ export default function Login() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const { login } = useAuth();
+  const { cargarDesdeServidor } = useCart();
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
@@ -16,6 +18,8 @@ export default function Login() {
     setLoading(true);
     try {
       const user = await login(form.username, form.password);
+      // Cargar carrito guardado en el servidor
+      await cargarDesdeServidor();
       navigate(user.es_admin || user.is_staff ? '/admin' : '/home');
     } catch (err) {
       setError(err.response?.data?.error || 'Error al iniciar sesión.');

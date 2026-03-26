@@ -16,6 +16,11 @@ urlpatterns = [
     path('usuarios/', views.usuarios_list, name='usuarios-list'),
     path('usuarios/<int:pk>/', views.usuario_detail, name='usuario-detail'),
 
+    # Carrito
+    path('carrito/', views.carrito_get, name='carrito-get'),
+    path('carrito/sync/', views.carrito_sync, name='carrito-sync'),
+    path('carrito/limpiar/', views.carrito_limpiar, name='carrito-limpiar'),
+
     # Pedidos
     path('pedidos/', views.pedidos_list, name='pedidos-list'),
     path('pedidos/<int:pk>/', views.pedido_detail, name='pedido-detail'),
