@@ -58,7 +58,8 @@ class ProductoSerializer(serializers.ModelSerializer):
     def get_imagen_url(self, obj):
         request = self.context.get('request')
         if obj.imagen and request:
-            return request.build_absolute_uri(obj.imagen.url)
+            url = request.build_absolute_uri(obj.imagen.url)
+            return url.replace('http://', 'https://')
         return None
 
 
