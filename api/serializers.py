@@ -25,17 +25,20 @@ class CrearUsuarioSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True, min_length=4)
     telefono = serializers.CharField(required=False, allow_blank=True)
     direccion = serializers.CharField(required=False, allow_blank=True)
+    es_admin = serializers.BooleanField(required=False, default=False)
 
     class Meta:
         model = User
-        fields = ['username', 'password', 'first_name', 'last_name', 'email', 'telefono', 'direccion']
+        fields = ['username', 'password', 'first_name', 'last_name', 'email', 'telefono', 'direccion', 'es_admin']
 
     def create(self, validated_data):
         telefono = validated_data.pop('telefono', '')
         direccion = validated_data.pop('direccion', '')
+        es_admin = validated_data.pop('es_admin', False)
         password = validated_data.pop('password')
         user = User(**validated_data)
         user.set_password(password)
+        user.is_staff = es_admin
         user.save()
         PerfilCliente.objects.create(usuario=user, telefono=telefono, direccion=direccion)
         return user
