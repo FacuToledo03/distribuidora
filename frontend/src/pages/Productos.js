@@ -2,10 +2,12 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import api from '../services/api';
 import { useCart } from '../context/CartContext';
+import { useAuth } from '../context/AuthContext';
 import styles from './Productos.module.css';
 
 function ProductoCard({ producto }) {
   const { agregar, actualizarCantidad, quitar, items } = useCart();
+  const { esAdmin } = useAuth();
   const navigate = useNavigate();
 
   const enCarrito = items.find(i => i.producto.id === producto.id);
@@ -55,7 +57,7 @@ function ProductoCard({ producto }) {
           <span className={styles.precioUnit}>/ unidad</span>
         </div>
 
-        {sinStock ? (
+        {esAdmin ? null : sinStock ? (
           <div className={styles.sinStockBtn}>Sin stock</div>
         ) : cantidad === 0 ? (
           <button className={styles.addBtn} onClick={handleAgregar}>

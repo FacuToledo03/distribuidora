@@ -17,7 +17,7 @@ function Modal({ title, onClose, children }) {
   );
 }
 
-const emptyForm = { nombre: '', descripcion: '', precio: '', stock: '', categoria: '', activo: true };
+const emptyForm = { nombre: '', descripcion: '', precio: '', stock: '', categoria: '', activo: true, es_nuevo: false };
 
 export default function AdminProductos() {
   const [productos, setProductos] = useState([]);
@@ -56,7 +56,7 @@ export default function AdminProductos() {
 
   const abrirEditar = (p) => {
     setSelected(p);
-    setForm({ nombre: p.nombre, descripcion: p.descripcion, precio: p.precio, stock: p.stock, categoria: p.categoria || '', activo: p.activo });
+    setForm({ nombre: p.nombre, descripcion: p.descripcion, precio: p.precio, stock: p.stock, categoria: p.categoria || '', activo: p.activo, es_nuevo: p.es_nuevo });
     setImagenFile(null);
     setImagenPreview(p.imagen_url || null);
     setError('');
@@ -156,6 +156,7 @@ export default function AdminProductos() {
                 <th>Categoría</th>
                 <th>Precio</th>
                 <th>Stock</th>
+                <th>Nuevo</th>
                 <th>Estado</th>
                 <th>Acciones</th>
               </tr>
@@ -175,6 +176,11 @@ export default function AdminProductos() {
                   <td>{p.categoria_nombre || '—'}</td>
                   <td>${Number(p.precio).toLocaleString('es-AR')}</td>
                   <td><span className={stockClass(p.stock)}>{p.stock}</span></td>
+                  <td>
+                    <span className={styles.rolBadge} style={p.es_nuevo ? { background: 'rgba(243,182,226,0.24)', color: 'var(--dark)' } : { background: 'rgba(148,163,184,0.12)', color: '#64748b' }}>
+                      {p.es_nuevo ? 'Sí' : 'No'}
+                    </span>
+                  </td>
                   <td>
                     <span className={styles.rolBadge} style={p.activo ? { background: 'rgba(34,197,94,0.1)', color: '#16a34a' } : { background: 'rgba(239,68,68,0.1)', color: '#dc2626' }}>
                       {p.activo ? 'Activo' : 'Inactivo'}
@@ -249,6 +255,13 @@ export default function AdminProductos() {
               <select className={styles.input} value={form.activo} onChange={e => setForm({ ...form, activo: e.target.value === 'true' })}>
                 <option value="true">Activo</option>
                 <option value="false">Inactivo</option>
+              </select>
+            </div>
+            <div className={styles.field}>
+              <label className={styles.label}>Nuevo producto</label>
+              <select className={styles.input} value={form.es_nuevo} onChange={e => setForm({ ...form, es_nuevo: e.target.value === 'true' })}>
+                <option value="false">No</option>
+                <option value="true">Sí, mostrar como nuevo</option>
               </select>
             </div>
             <div className={styles.field} style={{ gridColumn: '1/-1' }}>

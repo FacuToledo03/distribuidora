@@ -109,7 +109,7 @@
 .precio {
   font-size: 38px;
   font-weight: 800;
-  color: var(--brand);
+  color: var(--dark);
   font-family: var(--font-heading);
   line-height: 1;
 }
@@ -132,11 +132,10 @@
 .addSection {
   display: flex;
   align-items: center;
-  gap: 24px;
-  padding: 20px;
-  background: var(--bg);
-  border-radius: 12px;
-  border: 1px solid var(--border);
+  gap: 12px;
+  padding: 0;
+  background: none;
+  border: none;
   flex-wrap: wrap;
 }
 
@@ -144,6 +143,13 @@
   display: flex;
   flex-direction: column;
   gap: 8px;
+}
+
+.aplicarWrap {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  justify-content: flex-end;
 }
 
 .cantidadLabel, .subtotalLabel {
@@ -158,31 +164,36 @@
   display: flex;
   align-items: center;
   background: white;
-  border: 1.5px solid var(--border);
-  border-radius: 10px;
+  border: 1.5px solid #ddd;
+  border-radius: 8px;
   overflow: hidden;
+  height: 48px;
 }
 
 .cantidadControls button {
-  width: 40px;
-  height: 40px;
+  width: 44px;
+  height: 100%;
   border: none;
   background: none;
-  font-size: 18px;
-  font-weight: 700;
-  color: var(--mid);
+  font-size: 20px;
+  font-weight: 400;
+  color: #666;
   transition: background 0.15s;
   cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.cantidadControls button:hover:not(:disabled) { background: var(--bg); }
+.cantidadControls button:hover:not(:disabled) { background: #f5f5f5; }
 .cantidadControls button:disabled { opacity: 0.3; cursor: not-allowed; }
 
 .cantidadControls span {
-  min-width: 44px;
+  min-width: 48px;
   text-align: center;
-  font-weight: 700;
+  font-weight: 500;
   font-size: 16px;
+  color: #333;
 }
 
 .subtotalWrap {
@@ -198,25 +209,27 @@
   font-family: var(--font-heading);
 }
 
-/* Botón agregar */
+/* Botón agregar - amarillo/dorado como Mercado Libre */
 .addBtn {
-  background: var(--brand);
-  color: white;
+  background: #ffcc00;
+  color: #333;
   border: none;
-  border-radius: 14px;
-  padding: 18px 28px;
-  font-size: 17px;
+  border-radius: 8px;
+  padding: 14px 24px;
+  font-size: 15px;
   font-weight: 700;
   font-family: var(--font-heading);
-  width: 100%;
   transition: all 0.2s;
-  letter-spacing: 0.3px;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  flex: 1;
+  min-width: 200px;
 }
 
 .addBtn:hover:not(:disabled) {
-  background: var(--brand-dark);
+  background: #f5c400;
   transform: translateY(-1px);
-  box-shadow: 0 8px 24px rgba(230,57,70,0.3);
+  box-shadow: 0 4px 12px rgba(255,204,0,0.3);
 }
 
 .addBtn:disabled {
@@ -229,6 +242,31 @@
 
 .addBtn.added {
   background: var(--success);
+}
+
+/* Mensaje ya agregado */
+.yaAgregado {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 12px;
+  font-size: 14px;
+  color: var(--mid);
+}
+
+.checkIcon {
+  color: #16a34a;
+  font-weight: 700;
+}
+
+.verCarrito {
+  color: #0066cc;
+  font-weight: 600;
+  text-decoration: underline;
+}
+
+.verCarrito:hover {
+  color: #0055aa;
 }
 
 /* Loading */

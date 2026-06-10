@@ -1,9 +1,11 @@
 .navbar {
-  background: var(--dark);
+  background: linear-gradient(135deg, rgba(243,182,226,0.96), rgba(191,236,228,0.96));
+  backdrop-filter: blur(16px);
   position: sticky;
   top: 0;
   z-index: 100;
-  box-shadow: 0 2px 20px rgba(0,0,0,0.25);
+  box-shadow: 0 8px 28px rgba(74,63,73,0.12);
+  border-bottom: 1px solid rgba(255,255,255,0.62);
 }
 
 .inner {
@@ -23,13 +25,24 @@
   flex-shrink: 0;
 }
 
-.logoIcon { font-size: 22px; }
+.logoIcon {
+  width: 30px !important;
+  height: 30px !important;
+  min-width: 30px;
+  max-width: 30px !important;
+  max-height: 30px !important;
+  border-radius: 50%;
+  object-fit: cover;
+  display: block;
+  border: 2px solid rgba(255,255,255,0.72);
+  box-shadow: 0 4px 12px rgba(74,63,73,0.16);
+}
 
 .logoText {
   font-family: var(--font-heading);
   font-size: 18px;
   font-weight: 800;
-  color: var(--white);
+  color: var(--dark);
   letter-spacing: -0.5px;
 }
 
@@ -44,17 +57,17 @@
 .link {
   padding: 6px 12px;
   border-radius: 8px;
-  color: rgba(255,255,255,0.65);
+  color: rgba(74,63,73,0.74);
   font-size: 14px;
   font-weight: 500;
   transition: all 0.2s;
   white-space: nowrap;
 }
 
-.link:hover { background: rgba(255,255,255,0.08); color: white; }
-.link.active { background: rgba(230,57,70,0.2); color: var(--brand); }
-.adminLink { color: rgba(255,200,100,0.8) !important; }
-.adminLink.active { background: rgba(245,158,11,0.15) !important; color: var(--warning) !important; }
+.link:hover { background: rgba(255,255,255,0.45); color: var(--dark); }
+.link.active { background: rgba(255,255,255,0.62); color: var(--dark); }
+.adminLink { color: rgba(74,63,73,0.88) !important; }
+.adminLink.active { background: rgba(255,243,166,0.42) !important; color: var(--dark) !important; }
 
 .actions {
   display: flex;
@@ -70,15 +83,16 @@
   border-radius: 8px;
   transition: background 0.2s;
   display: flex;
+  color: var(--dark);
 }
 
-.cartBtn:hover { background: rgba(255,255,255,0.08); }
+.cartBtn:hover { background: rgba(232,193,221,0.14); }
 
 .badge {
   position: absolute;
   top: -4px; right: -4px;
   background: var(--brand);
-  color: white;
+  color: var(--dark);
   font-size: 10px;
   font-weight: 700;
   min-width: 17px;
@@ -90,23 +104,27 @@
   padding: 0 3px;
 }
 
-.userMenu { position: relative; }
+.userMenu {
+  position: relative;
+  padding-bottom: 10px;
+  margin-bottom: -10px;
+}
 
 .userBtn {
   display: flex;
   align-items: center;
   gap: 8px;
-  background: rgba(255,255,255,0.07);
-  border: 1px solid rgba(255,255,255,0.12);
-  border-radius: 10px;
+  background: rgba(255,251,253,0.36);
+  border: 1px solid rgba(255,255,255,0.58);
+  border-radius: 14px;
   padding: 6px 10px;
-  color: white;
+  color: var(--dark);
   font-size: 14px;
   transition: all 0.2s;
   cursor: pointer;
 }
 
-.userBtn:hover { background: rgba(255,255,255,0.12); }
+.userBtn:hover { background: rgba(255,251,253,0.64); }
 
 .avatar {
   width: 28px; height: 28px;
@@ -132,48 +150,82 @@
 
 .dropdown {
   position: absolute;
-  top: calc(100% + 8px);
-  right: 0;
-  background: var(--dark-2);
-  border: 1px solid rgba(255,255,255,0.1);
-  border-radius: 12px;
-  min-width: 180px;
-  overflow: hidden;
-  box-shadow: var(--shadow-lg);
+  top: calc(100% + 2px);
+  left: 50%;
+  right: auto;
+  transform: translateX(-50%);
+  background: rgba(255,251,253,0.98);
+  border: 1px solid rgba(243,182,226,0.62);
+  border-radius: 16px;
+  min-width: 162px;
+  overflow: visible;
+  box-shadow: 0 16px 34px rgba(74,63,73,0.16);
+  padding: 8px;
   animation: fadeIn 0.15s ease;
   z-index: 200;
 }
 
+.dropdown::before {
+  content: '';
+  position: absolute;
+  top: -10px;
+  left: 0;
+  right: 0;
+  height: 10px;
+}
+
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(-6px); }
-  to { opacity: 1; transform: translateY(0); }
+  from { opacity: 0; transform: translate(-50%, -6px); }
+  to { opacity: 1; transform: translate(-50%, 0); }
 }
 
 .dropdownHeader {
-  padding: 12px 16px;
-  border-bottom: 1px solid rgba(255,255,255,0.08);
+  padding: 8px 12px 10px;
+  border-bottom: 1px solid rgba(243,182,226,0.30);
   display: flex;
   flex-direction: column;
   gap: 2px;
-  color: white;
+  color: var(--dark);
 }
 
-.dropdownHeader small { color: rgba(255,255,255,0.5); font-size: 12px; }
+.dropdownHeader small { color: var(--muted); font-size: 12px; }
 
 .logoutBtn {
   width: 100%;
-  padding: 12px 16px;
+  padding: 10px 12px;
   background: none;
   border: none;
-  color: var(--brand);
-  font-size: 14px;
-  font-weight: 500;
+  color: var(--dark);
+  font-size: 15px;
+  font-weight: 600;
   text-align: left;
   transition: background 0.2s;
   cursor: pointer;
+  border-radius: 11px;
 }
 
-.logoutBtn:hover { background: rgba(230,57,70,0.12); }
+.logoutBtn:hover { background: rgba(243,182,226,0.20); }
+
+.dropdownLink {
+  display: block;
+  padding: 10px 12px;
+  color: var(--dark);
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.35;
+  white-space: nowrap;
+  transition: background 0.2s;
+  border-radius: 11px;
+}
+
+.dropdownLink + .dropdownLink {
+  margin-top: 4px;
+}
+
+.dropdownLink:hover {
+  background: linear-gradient(135deg, rgba(243,182,226,0.24), rgba(191,236,228,0.28));
+  color: var(--dark);
+}
 
 /* Hamburger menu button — solo mobile */
 .menuToggle {
@@ -193,8 +245,8 @@
 .mobileMenu {
   display: none;
   flex-direction: column;
-  background: var(--dark-2);
-  border-top: 1px solid rgba(255,255,255,0.08);
+  background: rgba(74,69,74,0.98);
+  border-top: 1px solid rgba(232,193,221,0.16);
   padding: 12px 20px 16px;
   gap: 4px;
   animation: slideDown 0.2s ease;
@@ -215,8 +267,8 @@
   transition: all 0.15s;
 }
 
-.mobileLink:hover { background: rgba(255,255,255,0.07); color: white; }
-.mobileLink.active { background: rgba(230,57,70,0.2); color: var(--brand); }
+.mobileLink:hover { background: rgba(232,193,221,0.12); color: white; }
+.mobileLink.active { background: rgba(232,193,221,0.2); color: var(--brand); }
 
 /* ── RESPONSIVE ── */
 @media (max-width: 768px) {

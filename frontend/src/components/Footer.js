@@ -1,15 +1,16 @@
 import React from 'react';
+import logoYaya from '../assets/logo-yaya.jpeg';
 import styles from './Footer.module.css';
 
 // ─── CONFIGURACIÓN — reemplazá con los datos reales ──────────────────────────
 const DATOS = {
   nombre: 'Distribuidora Yaya',
-  telefono: '+54 9 351 600-0000',
-  whatsapp: '5493516000000',
-  email: 'contacto@distribuidora.com',
-  direccion: 'Av. Siempreviva 742, Córdoba',
+  telefono: '+54 9 3468 640663',
+  whatsapp: '5493468640663',
+  email: 'perfumeriayaya@distribuidora.com',
+  direccion: 'Italia 1190, Arias, Córdoba',
   horario: 'Lun a Vie: 8:00 - 18:00 hs  |  Sáb: 8:00 - 13:00 hs',
-  instagram: 'https://instagram.com/distribuidorayaya',
+  instagram: 'https://www.instagram.com/perfumeriayaya/?hl=es',
   facebook: 'https://facebook.com/distribuidorayaya',
 };
 // ─────────────────────────────────────────────────────────────────────────────
@@ -22,7 +23,7 @@ export default function Footer() {
         {/* Marca */}
         <div className={styles.col}>
           <div className={styles.logo}>
-            <span>📦</span>
+            <img src={logoYaya} alt="Yaya Perfumería" className={styles.logoImg} />
             <span className={styles.logoText}>{DATOS.nombre}</span>
           </div>
           <p className={styles.tagline}>

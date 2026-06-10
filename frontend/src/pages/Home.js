@@ -1,29 +1,32 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../services/api';
+import carruselPeloNuevo from '../assets/carrusel-pelo-nuevo.jpeg';
+import carruselExtraAcida from '../assets/carrusel.extra-acida.jpeg';
+import carruselAquaStyling from '../assets/carrusel-aqua-styling.jpeg';
 import styles from './Home.module.css';
 
 // ─── CARRUSEL — reemplazá las URLs por tus imágenes reales ───────────────────
 const SLIDES = [
   {
-    img: 'https://images.unsplash.com/photo-1542838132-92c53300491e?w=1400&q=80',
-    titulo: 'Bienvenidos a nuestra distribuidora',
-    subtitulo: 'Los mejores productos al mejor precio',
+    img: carruselPeloNuevo,
+    titulo: '',
+    subtitulo: '',
   },
   {
-    img: 'https://images.unsplash.com/photo-1534723328310-e82dad3ee43f?w=1400&q=80',
-    titulo: 'Variedad y calidad garantizada',
-    subtitulo: 'Todo lo que tu negocio necesita en un solo lugar',
+    img: carruselExtraAcida,
+    titulo: '',
+    subtitulo: '',
   },
   {
-    img: 'https://images.unsplash.com/photo-1488459716781-31db52582fe9?w=1400&q=80',
-    titulo: 'Entregas rápidas y seguras',
-    subtitulo: 'Pedí hoy y recibí en tiempo récord',
+    img: carruselAquaStyling,
+    titulo: '',
+    subtitulo: '',
   },
 ];
 
 // ─── MAPA — reemplazá con el iframe de Google Maps de tu negocio ─────────────
-const MAPA_IFRAME = `<iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2370.584035761978!2d-62.401544697285956!3d-33.64164633980026!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x95c8eb3dcb93f9b7%3A0xdfd3bd98cc713465!2sLola%20vol.2!5e0!3m2!1ses-419!2sar!4v1773435457216!5m2!1ses-419!2sar" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+const MAPA_IFRAME = `<iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3321.579013342686!2d-62.402913925644484!3d-33.64215607331417!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x95c8eb007a57752f%3A0xd88e4eb372c2d6f3!2sYaya%20Perfumer%C3%ADa!5e0!3m2!1ses-419!2sar!4v1778712385811!5m2!1ses-419!2sar" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
 </iframe>`;
 // ─────────────────────────────────────────────────────────────────────────────
 
@@ -47,13 +50,15 @@ function Carrusel() {
           className={`${styles.slide} ${i === actual ? styles.slideActive : ''}`}
           style={{ backgroundImage: `url(${s.img})` }}
         >
-          <div className={styles.slideOverlay}>
-            <h2 className={styles.slideTitulo}>{s.titulo}</h2>
-            <p className={styles.slideSubtitulo}>{s.subtitulo}</p>
-            <button className={styles.slideCta} onClick={() => navigate('/productos')}>
-              Ver productos →
-            </button>
-          </div>
+          {(s.titulo || s.subtitulo) && (
+            <div className={styles.slideOverlay}>
+              {s.titulo && <h2 className={styles.slideTitulo}>{s.titulo}</h2>}
+              {s.subtitulo && <p className={styles.slideSubtitulo}>{s.subtitulo}</p>}
+              <button className={styles.slideCta} onClick={() => navigate('/productos')}>
+                Ver productos →
+              </button>
+            </div>
+          )}
         </div>
       ))}
 
@@ -70,6 +75,58 @@ function Carrusel() {
         ))}
       </div>
     </div>
+  );
+}
+
+function SeccionNuevosProductos() {
+  const [productos, setProductos] = useState([]);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    api.get('/productos/').then(res => {
+      const data = res.data.results || res.data;
+      setProductos(data.filter(p => p.es_nuevo).slice(0, 8));
+    });
+  }, []);
+
+  if (!productos.length) return null;
+
+  return (
+    <section className={styles.nuevosSeccion}>
+      <div className={styles.seccionInner}>
+        <div className={styles.nuevosHeader}>
+          <div>
+            <h2 className={styles.seccionTitulo}>Nuevos productos</h2>
+            <p className={styles.seccionSub}>Conocé las últimas novedades disponibles</p>
+          </div>
+          <button className={styles.verTodosBtn} onClick={() => navigate('/productos')}>
+            Ver catálogo
+          </button>
+        </div>
+        <div className={styles.nuevosGrid}>
+          {productos.map(producto => (
+            <button
+              key={producto.id}
+              className={styles.nuevoCard}
+              onClick={() => navigate(`/productos/${producto.id}`)}
+            >
+              <span className={styles.nuevoBadge}>Nuevo</span>
+              <div className={styles.nuevoImgBox}>
+                {producto.imagen_url
+                  ? <img src={producto.imagen_url} alt={producto.nombre} className={styles.nuevoImg} />
+                  : <span className={styles.nuevoNoImg}>🧴</span>
+                }
+              </div>
+              <div className={styles.nuevoBody}>
+                <span className={styles.nuevoCategoria}>{producto.categoria_nombre || 'Producto'}</span>
+                <h3 className={styles.nuevoNombre}>{producto.nombre}</h3>
+                <strong className={styles.nuevoPrecio}>${Number(producto.precio).toLocaleString('es-AR')}</strong>
+              </div>
+            </button>
+          ))}
+        </div>
+      </div>
+    </section>
   );
 }
 
@@ -137,6 +194,7 @@ export default function Home() {
   return (
     <div className={styles.page}>
       <Carrusel />
+      <SeccionNuevosProductos />
       <SeccionCategorias />
       <SeccionMapa />
     </div>

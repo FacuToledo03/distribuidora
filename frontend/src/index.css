@@ -1,24 +1,28 @@
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 :root {
-  --brand: #E63946;
-  --brand-dark: #c1121f;
-  --brand-light: #fde8e9;
-  --dark: #1a1a2e;
-  --dark-2: #16213e;
-  --mid: #374151;
-  --muted: #6b7280;
-  --border: #e5e7eb;
-  --bg: #f8f9fa;
+  --brand: #F3B6E2;
+  --brand-dark: #E89AD3;
+  --brand-light: #FCEAF7;
+  --accent: #BFECE4;
+  --accent-dark: #9EDDD2;
+  --soft-yellow: #FFF3A6;
+  --soft-mint: #DDF8F2;
+  --dark: #4A3F49;
+  --dark-2: #5A4D59;
+  --mid: #6F626E;
+  --muted: #958B94;
+  --border: #F0D8EA;
+  --bg: #FFFBFD;
   --white: #ffffff;
   --success: #22c55e;
   --warning: #f59e0b;
   --info: #3b82f6;
-  --shadow-sm: 0 1px 3px rgba(0,0,0,0.08);
-  --shadow: 0 4px 16px rgba(0,0,0,0.10);
-  --shadow-lg: 0 12px 40px rgba(0,0,0,0.14);
-  --radius: 12px;
-  --radius-sm: 8px;
+  --shadow-sm: 0 4px 14px rgba(58,54,58,0.07);
+  --shadow: 0 12px 30px rgba(58,54,58,0.10);
+  --shadow-lg: 0 24px 60px rgba(58,54,58,0.16);
+  --radius: 18px;
+  --radius-sm: 12px;
   --font-heading: 'Nunito', sans-serif;
   --font-body: 'Inter', sans-serif;
 }
@@ -27,7 +31,13 @@ html { scroll-behavior: smooth; }
 
 body {
   font-family: var(--font-body);
-  background: var(--bg);
+  background:
+    radial-gradient(circle at 8% 5%, rgba(243,182,226,0.55), transparent 28%),
+    radial-gradient(circle at 92% 12%, rgba(191,236,228,0.50), transparent 30%),
+    radial-gradient(circle at 5% 85%, rgba(191,236,228,0.38), transparent 32%),
+    radial-gradient(circle at 90% 88%, rgba(243,182,226,0.34), transparent 28%),
+    linear-gradient(135deg, rgba(255,243,166,0.20), transparent 34%),
+    var(--bg);
   color: var(--dark);
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;

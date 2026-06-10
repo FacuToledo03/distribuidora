@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, Link } from "react-router-dom";
 import api from "../services/api";
 import { useCart } from "../context/CartContext";
 import styles from "./ProductoDetalle.module.css";
@@ -11,7 +11,7 @@ export default function ProductoDetalle() {
   const [producto, setProducto] = useState(null);
   const [loading, setLoading] = useState(true);
   const [cantidad, setCantidad] = useState(1);
-  const [feedback, setFeedback] = useState(false);
+  const [agregado, setAgregado] = useState(false);
 
   useEffect(() => {
     api
@@ -21,14 +21,24 @@ export default function ProductoDetalle() {
       .finally(() => setLoading(false));
   }, [id, navigate]);
 
+  // Verificar si ya está en el carrito
   const enCarrito = items.find((i) => i.producto.id === producto?.id);
   const sinStock = producto?.stock === 0;
-  const stockBajo = producto?.stock > 0 && producto?.stock <= 5;
+
+  const handleRestar = () => {
+    setCantidad((c) => Math.max(1, c - 1));
+  };
+
+  const handleSumar = () => {
+    if (cantidad < producto.stock) {
+      setCantidad((c) => c + 1);
+    }
+  };
 
   const handleAgregar = () => {
     agregar(producto, cantidad);
-    setFeedback(true);
-    setTimeout(() => setFeedback(false), 1500);
+    setAgregado(true);
+    setTimeout(() => setAgregado(false), 3000);
   };
 
   if (loading)
@@ -86,81 +96,63 @@ export default function ProductoDetalle() {
             <span className={styles.precioUnit}>por unidad</span>
           </div>
 
-          {/* Stock */}
+          {/* Stock - solo indicar disponibilidad sin cantidad */}
           <div className={styles.stockInfo}>
-            {sinStock && (
+            {sinStock ? (
               <span
                 className={styles.stockTag}
                 style={{ background: "rgba(239,68,68,0.1)", color: "#dc2626" }}
               >
                 ✕ Sin stock
               </span>
-            )}
-            {stockBajo && (
-              <span
-                className={styles.stockTag}
-                style={{ background: "rgba(245,158,11,0.1)", color: "#d97706" }}
-              >
-                ⚠ Últimas {producto.stock} unidades
-              </span>
-            )}
-            {!sinStock && !stockBajo && (
+            ) : (
               <span
                 className={styles.stockTag}
                 style={{ background: "rgba(34,197,94,0.1)", color: "#16a34a" }}
               >
-                ✓ En stock ({producto.stock} disponibles)
+                ✓ En stock
               </span>
             )}
           </div>
 
-          {/* Cantidad + agregar */}
+          {/* Cantidad + agregar - diseño simple */}
           {!sinStock && (
             <div className={styles.addSection}>
-              <div className={styles.cantidadWrap}>
-                <span className={styles.cantidadLabel}>Cantidad</span>
-                <div className={styles.cantidadControls}>
-                  <button
-                    onClick={() => setCantidad((c) => Math.max(1, c - 1))}
-                    disabled={cantidad <= 1}
-                  >
-                    −
-                  </button>
-                  <span>{cantidad}</span>
-                  <button
-                    onClick={() =>
-                      setCantidad((c) => Math.min(producto.stock, c + 1))
-                    }
-                    disabled={cantidad >= producto.stock}
-                  >
-                    +
-                  </button>
-                </div>
+              <div className={styles.cantidadControls}>
+                <button onClick={handleRestar} disabled={cantidad <= 1}>−</button>
+                <span>{cantidad}</span>
+                <button 
+                  onClick={handleSumar}
+                  disabled={cantidad >= producto.stock}
+                >
+                  +
+                </button>
               </div>
 
-              <div className={styles.subtotalWrap}>
-                <span className={styles.subtotalLabel}>Subtotal</span>
-                <span className={styles.subtotal}>
-                  $
-                  {(Number(producto.precio) * cantidad).toLocaleString("es-AR")}
-                </span>
-              </div>
+              <button
+                className={styles.addBtn}
+                onClick={handleAgregar}
+              >
+                Agregar al carrito
+              </button>
             </div>
           )}
 
-          <button
-            className={`${styles.addBtn} ${feedback ? styles.added : ""}`}
-            onClick={handleAgregar}
-            disabled={sinStock}
-          >
-            {sinStock
-              ? "Sin stock"
-              : feedback
-                ? "✓ ¡Agregado al carrito!"
-                : enCarrito
-                  ? `+ Agregar más (${enCarrito.cantidad} en carrito)`
-                  : "🛒 Agregar al carrito"}
-          </button>
+          {/* Mensaje ya agregado */}
+          {(agregado || enCarrito) && !sinStock && (
+            <div className={styles.yaAgregado}>
+              <span className={styles.checkIcon}>✓</span>
+              <span>Ya agregaste este producto.</span>
+              <Link to="/carrito" className={styles.verCarrito}>VER CARRITO</Link>
+            </div>
+          )}
+
+          {/* Botón sin stock */}
+          {sinStock && (
+            <button className={styles.addBtn} disabled>
+              Sin stock
+            </button>
+          )}
         </div>
       </div>
     </div>

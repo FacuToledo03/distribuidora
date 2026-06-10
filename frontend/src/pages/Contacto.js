@@ -3,11 +3,11 @@ import styles from './Contacto.module.css';
 
 // ─── CONFIGURACIÓN ────────────────────────────────────────────────────────────
 const DATOS = {
-  telefono: '(0351) 600-0000',
-  whatsapp: '5493516000000',
-  email: 'contacto@distribuidora.com',
-  direccion: 'Av. Siempreviva 742, Córdoba',
-  instagram: 'https://instagram.com/distribuidorayaya',
+  telefono: '(03468) 64-0663',
+  whatsapp: '5493468640663',
+  email: 'perfumeriayaya@distribuidora.com',
+  direccion: 'Italia 1190, Arias, Córdoba',
+  instagram: 'https://www.instagram.com/perfumeriayaya/',
   facebook: 'https://facebook.com/distribuidorayaya',
 };
 // ─────────────────────────────────────────────────────────────────────────────

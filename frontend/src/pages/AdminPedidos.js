@@ -11,6 +11,120 @@ const ESTADOS = {
   cancelado:  { label: 'Cancelado', color: '#dc2626', bg: 'rgba(239,68,68,0.1)'  },
 };
 
+const EMPRESA = {
+  nombre: 'PERFUMERIA YAYA',
+  direccion: 'Dirección: completar dirección comercial',
+  cuit: 'CUIT: completar CUIT',
+};
+
+const formatoMoneda = (valor) => Number(valor || 0).toLocaleString('es-AR', {
+  style: 'currency',
+  currency: 'ARS',
+});
+
+const formatoFecha = (fecha) => new Date(fecha).toLocaleDateString('es-AR', {
+  day: '2-digit',
+  month: 'long',
+  year: 'numeric',
+});
+
+const escapeHtml = (valor) => String(valor ?? '')
+  .replaceAll('&', '&amp;')
+  .replaceAll('<', '&lt;')
+  .replaceAll('>', '&gt;')
+  .replaceAll('"', '&quot;')
+  .replaceAll("'", '&#039;');
+
+function descargarFactura(pedido) {
+  const filas = pedido.detalles.map(d => `
+    <tr>
+      <td>${escapeHtml(d.producto_nombre)}</td>
+      <td class="center">${d.cantidad}</td>
+      <td class="right">${formatoMoneda(d.precio_unitario)}</td>
+      <td class="right">${formatoMoneda(d.subtotal)}</td>
+    </tr>
+  `).join('');
+
+  const ventana = window.open('', '_blank', 'width=900,height=700');
+  if (!ventana) return;
+
+  ventana.document.write(`
+    <!doctype html>
+    <html>
+      <head>
+        <title>Factura Pedido #${pedido.id}</title>
+        <style>
+          * { box-sizing: border-box; }
+          body { font-family: Arial, sans-serif; color: #222; margin: 0; padding: 32px; }
+          .factura { max-width: 820px; margin: 0 auto; border: 1px solid #ddd; padding: 28px; }
+          .header { display: flex; justify-content: space-between; gap: 24px; border-bottom: 2px solid #222; padding-bottom: 18px; margin-bottom: 24px; }
+          .empresa h1 { margin: 0 0 8px; font-size: 28px; letter-spacing: 0.5px; }
+          .empresa p, .datos p { margin: 4px 0; font-size: 13px; }
+          .comprobante { text-align: right; }
+          .comprobante h2 { margin: 0 0 8px; font-size: 24px; }
+          .section { margin-bottom: 22px; }
+          .section h3 { margin: 0 0 10px; font-size: 15px; text-transform: uppercase; border-bottom: 1px solid #eee; padding-bottom: 6px; }
+          table { width: 100%; border-collapse: collapse; margin-top: 8px; }
+          th { background: #f5f5f5; text-align: left; font-size: 12px; text-transform: uppercase; padding: 10px; border: 1px solid #ddd; }
+          td { padding: 10px; border: 1px solid #ddd; font-size: 13px; }
+          .center { text-align: center; }
+          .right { text-align: right; }
+          .total { display: flex; justify-content: flex-end; margin-top: 18px; }
+          .totalBox { min-width: 260px; border: 2px solid #222; padding: 14px 18px; font-size: 18px; font-weight: bold; display: flex; justify-content: space-between; }
+          .notas { background: #fafafa; border: 1px solid #eee; padding: 12px; font-size: 13px; }
+          .footer { margin-top: 32px; text-align: center; font-size: 12px; color: #666; }
+          @media print { body { padding: 0; } .factura { border: none; } }
+        </style>
+      </head>
+      <body>
+        <div class="factura">
+          <div class="header">
+            <div class="empresa">
+              <h1>${EMPRESA.nombre}</h1>
+              <p>${EMPRESA.direccion}</p>
+              <p>${EMPRESA.cuit}</p>
+            </div>
+            <div class="comprobante">
+              <h2>FACTURA</h2>
+              <p><strong>Pedido N°:</strong> ${pedido.id}</p>
+              <p><strong>Fecha:</strong> ${formatoFecha(pedido.creado_en)}</p>
+              <p><strong>Estado:</strong> ${escapeHtml(ESTADOS[pedido.estado]?.label || pedido.estado)}</p>
+            </div>
+          </div>
+          <div class="section datos">
+            <h3>Datos del cliente</h3>
+            <p><strong>Cliente:</strong> ${escapeHtml(pedido.cliente_nombre || 'Cliente')}</p>
+          </div>
+          <div class="section">
+            <h3>Detalle de productos</h3>
+            <table>
+              <thead>
+                <tr>
+                  <th>Producto</th>
+                  <th class="center">Cantidad</th>
+                  <th class="right">Valor unitario</th>
+                  <th class="right">Total</th>
+                </tr>
+              </thead>
+              <tbody>${filas}</tbody>
+            </table>
+            <div class="total">
+              <div class="totalBox">
+                <span>Total</span>
+                <span>${formatoMoneda(pedido.total)}</span>
+              </div>
+            </div>
+          </div>
+          ${pedido.notas ? `<div class="section"><h3>Notas</h3><div class="notas">${escapeHtml(pedido.notas)}</div></div>` : ''}
+          <div class="footer">Gracias por tu compra.</div>
+        </div>
+        <script>window.onload = function () { window.print(); };</script>
+      </body>
+    </html>
+  `);
+  ventana.document.close();
+}
+
 export default function AdminPedidos() {
   const [pedidos, setPedidos]     = useState([]);
   const [todos, setTodos]         = useState([]);
@@ -141,6 +255,7 @@ export default function AdminPedidos() {
                 <th>Total</th>
                 <th>Estado</th>
                 <th>Cambiar estado</th>
+                <th>Factura</th>
                 <th>Detalle</th>
               </tr>
             </thead>
@@ -173,6 +288,14 @@ export default function AdminPedidos() {
                     <td>
                       <button
                         className={styles.editBtn}
+                        onClick={() => descargarFactura(p)}
+                      >
+                        PDF
+                      </button>
+                    </td>
+                    <td>
+                      <button
+                        className={styles.editBtn}
                         onClick={() => setExpandido(expandido === p.id ? null : p.id)}
                       >
                         {expandido === p.id ? 'Cerrar' : 'Ver items'}
@@ -181,7 +304,7 @@ export default function AdminPedidos() {
                   </tr>
                   {expandido === p.id && (
                     <tr>
-                      <td colSpan={7} style={{ padding: 0 }}>
+                      <td colSpan={8} style={{ padding: 0 }}>
                         <div style={{ background: 'var(--bg)', padding: '16px 24px', borderTop: '1px solid var(--border)' }}>
                           <table style={{ width: '100%', fontSize: 13, borderCollapse: 'collapse' }}>
                             <thead>

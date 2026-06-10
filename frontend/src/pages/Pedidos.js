@@ -11,6 +11,17 @@ const ESTADOS = {
   cancelado: { label: 'Cancelado', color: '#ef4444', bg: 'rgba(239,68,68,0.1)' },
 };
 
+const formatoMoneda = (valor) => Number(valor || 0).toLocaleString('es-AR', {
+  style: 'currency',
+  currency: 'ARS',
+});
+
+const formatoFecha = (fecha) => new Date(fecha).toLocaleDateString('es-AR', {
+  day: '2-digit',
+  month: 'long',
+  year: 'numeric',
+});
+
 function EstadoBadge({ estado }) {
   const s = ESTADOS[estado] || { label: estado, color: '#888', bg: '#f0f0f0' };
   return (
@@ -63,12 +74,12 @@ export default function Pedidos() {
                 <div className={styles.pedidoInfo}>
                   <span className={styles.pedidoNum}>Pedido #{pedido.id}</span>
                   <span className={styles.pedidoFecha}>
-                    {new Date(pedido.creado_en).toLocaleDateString('es-AR', { day: '2-digit', month: 'long', year: 'numeric' })}
+                    {formatoFecha(pedido.creado_en)}
                   </span>
                 </div>
                 <div className={styles.pedidoMeta}>
                   <EstadoBadge estado={pedido.estado} />
-                  <span className={styles.pedidoTotal}>${Number(pedido.total).toLocaleString('es-AR')}</span>
+                  <span className={styles.pedidoTotal}>{formatoMoneda(pedido.total)}</span>
                   <span className={styles.chevron}>{expandido === pedido.id ? '▲' : '▼'}</span>
                 </div>
               </div>
@@ -89,8 +100,8 @@ export default function Pedidos() {
                         <tr key={d.id}>
                           <td>{d.producto_nombre}</td>
                           <td>{d.cantidad}</td>
-                          <td>${Number(d.precio_unitario).toLocaleString('es-AR')}</td>
-                          <td>${Number(d.subtotal).toLocaleString('es-AR')}</td>
+                          <td>{formatoMoneda(d.precio_unitario)}</td>
+                          <td>{formatoMoneda(d.subtotal)}</td>
                         </tr>
                       ))}
                     </tbody>

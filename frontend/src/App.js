@@ -48,16 +48,16 @@ function AppRoutes() {
 
   return (
     <Routes>
-      <Route path="/login" element={user ? <Navigate to={esAdmin ? '/admin' : '/home'} /> : <Login />} />
+      <Route path="/login" element={user ? <Navigate to={esAdmin ? '/admin' : '/home'} /> : <AppLayout><Login /></AppLayout>} />
 
-      <Route path="/" element={<RequireAuth><AppLayout><Navigate to={esAdmin ? '/admin' : '/home'} /></AppLayout></RequireAuth>} />
-      <Route path="/home" element={<RequireAuth><AppLayout><Home /></AppLayout></RequireAuth>} />
+      <Route path="/" element={<AppLayout><Navigate to={esAdmin ? '/admin' : '/home'} /></AppLayout>} />
+      <Route path="/home" element={<AppLayout><Home /></AppLayout>} />
 
-      <Route path="/productos" element={<RequireAuth><AppLayout><Productos /></AppLayout></RequireAuth>} />
-      <Route path="/carrito" element={<RequireAuth><AppLayout><Carrito /></AppLayout></RequireAuth>} />
+      <Route path="/productos" element={<AppLayout><Productos /></AppLayout>} />
+      <Route path="/carrito" element={<AppLayout><Carrito /></AppLayout>} />
       <Route path="/pedidos" element={<RequireAuth><AppLayout><Pedidos /></AppLayout></RequireAuth>} />
-      <Route path="/productos/:id" element={<RequireAuth><AppLayout><ProductoDetalle /></AppLayout></RequireAuth>} />
-      <Route path="/contacto" element={<RequireAuth><AppLayout><Contacto /></AppLayout></RequireAuth>} />
+      <Route path="/productos/:id" element={<AppLayout><ProductoDetalle /></AppLayout>} />
+      <Route path="/contacto" element={<AppLayout><Contacto /></AppLayout>} />
 
       <Route path="/admin" element={<RequireAdmin><AppLayout><AdminLayout /></AppLayout></RequireAdmin>}>
         <Route index element={<AdminDashboard />} />

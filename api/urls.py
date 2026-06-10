@@ -9,6 +9,7 @@ router.register(r'productos', views.ProductoViewSet, basename='producto')
 urlpatterns = [
     # Auth
     path('auth/login/', views.login_view, name='login'),
+    path('auth/registro/', views.registro_view, name='registro'),
     path('auth/logout/', views.logout_view, name='logout'),
     path('auth/perfil/', views.perfil_view, name='perfil'),
 

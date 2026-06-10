@@ -31,6 +31,16 @@ class CrearUsuarioSerializer(serializers.ModelSerializer):
         model = User
         fields = ['username', 'password', 'first_name', 'last_name', 'email', 'telefono', 'direccion', 'es_admin']
 
+    def validate_username(self, value):
+        if User.objects.filter(username__iexact=value).exists():
+            raise serializers.ValidationError("Ya existe una cuenta con ese usuario.")
+        return value
+
+    def validate_email(self, value):
+        if value and User.objects.filter(email__iexact=value).exists():
+            raise serializers.ValidationError("Ya existe una cuenta con ese email.")
+        return value
+
     def create(self, validated_data):
         telefono = validated_data.pop('telefono', '')
         direccion = validated_data.pop('direccion', '')
@@ -56,13 +66,12 @@ class ProductoSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Producto
-        fields = ['id', 'nombre', 'descripcion', 'precio', 'stock', 'categoria', 'categoria_nombre', 'imagen', 'imagen_url', 'activo', 'creado_en']
+        fields = ['id', 'nombre', 'descripcion', 'precio', 'stock', 'categoria', 'categoria_nombre', 'imagen', 'imagen_url', 'activo', 'es_nuevo', 'creado_en']
 
     def get_imagen_url(self, obj):
         request = self.context.get('request')
         if obj.imagen and request:
-            url = request.build_absolute_uri(obj.imagen.url)
-            return url.replace('http://', 'https://')
+            return request.build_absolute_uri(obj.imagen.url)
         return None
 
 

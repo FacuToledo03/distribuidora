@@ -62,6 +62,22 @@ def login_view(request):
 
 
 @api_view(['POST'])
+@permission_classes([permissions.AllowAny])
+def registro_view(request):
+    data = request.data.copy()
+    data['es_admin'] = False
+    serializer = CrearUsuarioSerializer(data=data)
+    if serializer.is_valid():
+        user = serializer.save()
+        token, _ = Token.objects.get_or_create(user=user)
+        return Response({
+            'token': token.key,
+            'user': UserSerializer(user).data
+        }, status=status.HTTP_201_CREATED)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['POST'])
 def logout_view(request):
     request.user.auth_token.delete()
     return Response({'mensaje': 'Sesión cerrada.'})
@@ -127,7 +143,7 @@ class CategoriaViewSet(viewsets.ModelViewSet):
 
     def get_permissions(self):
         if self.action in ['list', 'retrieve']:
-            return [permissions.IsAuthenticated()]
+            return [permissions.AllowAny()]
         return [EsAdmin()]
 
 
@@ -138,7 +154,7 @@ class ProductoViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         qs = Producto.objects.all()
-        if not (self.request.user.is_staff or self.request.user.is_superuser):
+        if not (self.request.user.is_authenticated and (self.request.user.is_staff or self.request.user.is_superuser)):
             qs = qs.filter(activo=True)
         categoria = self.request.query_params.get('categoria')
         busqueda = self.request.query_params.get('busqueda')
@@ -150,7 +166,7 @@ class ProductoViewSet(viewsets.ModelViewSet):
 
     def get_permissions(self):
         if self.action in ['list', 'retrieve']:
-            return [permissions.IsAuthenticated()]
+            return [permissions.AllowAny()]
         return [EsAdmin()]
 
     def get_serializer_context(self):
@@ -222,6 +238,9 @@ def pedidos_list(request):
         else:
             pedidos = Pedido.objects.filter(cliente=request.user).prefetch_related('detalles__producto')
         return Response(PedidoSerializer(pedidos, many=True).data)
+
+    if request.user.is_staff or request.user.is_superuser:
+        return Response({'error': 'Los administradores no pueden realizar pedidos.'}, status=status.HTTP_403_FORBIDDEN)
 
     serializer = CrearPedidoSerializer(data=request.data)
     if not serializer.is_valid():

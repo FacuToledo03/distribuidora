@@ -1,17 +1,27 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
+import { useAuth } from '../context/AuthContext';
 import api from '../services/api';
 import styles from './Carrito.module.css';
 
 export default function Carrito() {
   const { items, quitar, actualizarCantidad, limpiar, total } = useCart();
+  const { user, esAdmin } = useAuth();
   const [notas, setNotas] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const navigate = useNavigate();
 
   const handleConfirmar = async () => {
+    if (esAdmin) {
+      setError('Los administradores no pueden realizar pedidos.');
+      return;
+    }
+    if (!user) {
+      navigate('/login?next=/carrito');
+      return;
+    }
     setError('');
     setLoading(true);
     try {
@@ -37,6 +47,17 @@ export default function Carrito() {
         <h2>Tu carrito está vacío</h2>
         <p>Agregá productos desde el catálogo</p>
         <Link to="/productos" className={styles.btn}>Ver catálogo</Link>
+      </div>
+    );
+  }
+
+  if (esAdmin) {
+    return (
+      <div className={styles.empty}>
+        <span>⚙️</span>
+        <h2>Los administradores no pueden hacer pedidos</h2>
+        <p>Usá el panel de administración para gestionar productos, usuarios y pedidos.</p>
+        <Link to="/admin" className={styles.btn}>Ir al panel admin</Link>
       </div>
     );
   }

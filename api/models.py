@@ -21,6 +21,7 @@ class Producto(models.Model):
     categoria = models.ForeignKey(Categoria, on_delete=models.SET_NULL, null=True, blank=True, related_name='productos')
     imagen = models.ImageField(upload_to='productos/', blank=True, null=True)
     activo = models.BooleanField(default=True)
+    es_nuevo = models.BooleanField(default=False)
     creado_en = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):

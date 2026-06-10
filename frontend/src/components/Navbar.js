@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
+import logoYaya from '../assets/logo-yaya.jpeg';
 import styles from './Navbar.module.css';
 
 export default function Navbar() {
@@ -14,7 +15,7 @@ export default function Navbar() {
 
   const handleLogout = async () => {
     await logout();
-    navigate('/login');
+    navigate('/home');
     setMobileOpen(false);
   };
 
@@ -25,14 +26,13 @@ export default function Navbar() {
     <nav className={styles.navbar}>
       <div className={styles.inner}>
         <Link to={esAdmin ? '/admin' : '/home'} className={styles.logo}>
-          <span className={styles.logoIcon}>📦</span>
+          <img src={logoYaya} alt="Yaya Perfumería" className={styles.logoIcon} />
           <span className={styles.logoText}>Distribuidora</span>
         </Link>
 
-        {/* Desktop links */}
         <div className={styles.links}>
           <Link to="/productos" className={`${styles.link} ${isActive('/productos') ? styles.active : ''}`}>Productos</Link>
-          <Link to="/pedidos" className={`${styles.link} ${isActive('/pedidos') ? styles.active : ''}`}>Mis pedidos</Link>
+          {user && <Link to="/pedidos" className={`${styles.link} ${isActive('/pedidos') ? styles.active : ''}`}>Mis pedidos</Link>}
           {!esAdmin && (
             <Link to="/contacto" className={`${styles.link} ${isActive('/contacto') ? styles.active : ''}`}>Contacto</Link>
           )}
@@ -42,29 +42,43 @@ export default function Navbar() {
         </div>
 
         <div className={styles.actions}>
-          <Link to="/carrito" className={styles.cartBtn}>
-            🛒
-            {cantidadItems > 0 && <span className={styles.badge}>{cantidadItems}</span>}
-          </Link>
+          {!esAdmin && (
+            <Link to="/carrito" className={styles.cartBtn}>
+              🛒
+              {cantidadItems > 0 && <span className={styles.badge}>{cantidadItems}</span>}
+            </Link>
+          )}
 
-          <div className={styles.userMenu}>
+          <div
+            className={styles.userMenu}
+            onMouseEnter={() => setMenuOpen(true)}
+            onMouseLeave={() => setMenuOpen(false)}
+          >
             <button className={styles.userBtn} onClick={() => setMenuOpen(!menuOpen)}>
-              <span className={styles.avatar}>{user?.first_name?.[0] || user?.username?.[0] || '?'}</span>
-              <span className={styles.userName}>{user?.first_name || user?.username}</span>
+              <span className={styles.avatar}>👤</span>
+              <span className={styles.userName}>{user ? `¡Hola, ${user?.first_name || user?.username}!` : 'Mi cuenta'}</span>
               <span className={styles.chevron}>{menuOpen ? '▲' : '▼'}</span>
             </button>
             {menuOpen && (
               <div className={styles.dropdown}>
-                <div className={styles.dropdownHeader}>
-                  <strong>{user?.username}</strong>
-                  <small>{esAdmin ? 'Administrador' : 'Cliente'}</small>
-                </div>
-                <button onClick={handleLogout} className={styles.logoutBtn}>Cerrar sesión</button>
+                {user ? (
+                  <>
+                    <div className={styles.dropdownHeader}>
+                      <strong>{user?.username}</strong>
+                      <small>{esAdmin ? 'Administrador' : 'Cliente'}</small>
+                    </div>
+                    <button onClick={handleLogout} className={styles.logoutBtn}>Cerrar sesión</button>
+                  </>
+                ) : (
+                  <>
+                    <Link to="/login?modo=registro" className={styles.dropdownLink}>Crear cuenta</Link>
+                    <Link to="/login" className={styles.dropdownLink}>Iniciar sesión</Link>
+                  </>
+                )}
               </div>
             )}
           </div>
 
-          {/* Hamburguesa mobile */}
           <button className={styles.menuToggle} onClick={() => setMobileOpen(!mobileOpen)}>
             {mobileOpen ? '✕' : '☰'}
           </button>
@@ -76,16 +90,20 @@ export default function Navbar() {
         <div className={styles.mobileMenu}>
           <Link to="/home" className={`${styles.mobileLink} ${isActive('/home') ? styles.active : ''}`} onClick={closeMobile}>Inicio</Link>
           <Link to="/productos" className={`${styles.mobileLink} ${isActive('/productos') ? styles.active : ''}`} onClick={closeMobile}>Productos</Link>
-          <Link to="/pedidos" className={`${styles.mobileLink} ${isActive('/pedidos') ? styles.active : ''}`} onClick={closeMobile}>Mis pedidos</Link>
+          {user && <Link to="/pedidos" className={`${styles.mobileLink} ${isActive('/pedidos') ? styles.active : ''}`} onClick={closeMobile}>Mis pedidos</Link>}
           {!esAdmin && (
             <Link to="/contacto" className={`${styles.mobileLink} ${isActive('/contacto') ? styles.active : ''}`} onClick={closeMobile}>Contacto</Link>
           )}
           {esAdmin && (
             <Link to="/admin" className={`${styles.mobileLink} ${location.pathname.startsWith('/admin') ? styles.active : ''}`} onClick={closeMobile}>⚙ Admin</Link>
           )}
-          <button onClick={handleLogout} className={styles.mobileLink} style={{ background: 'none', border: 'none', textAlign: 'left', color: 'var(--brand)', fontWeight: 600, cursor: 'pointer', width: '100%' }}>
-            Cerrar sesión
-          </button>
+          {user ? (
+            <button onClick={handleLogout} className={styles.mobileLink} style={{ background: 'none', border: 'none', textAlign: 'left', color: 'var(--brand)', fontWeight: 600, cursor: 'pointer', width: '100%' }}>
+              Cerrar sesión
+            </button>
+          ) : (
+            <Link to="/login" className={styles.mobileLink} onClick={closeMobile}>Ingresar / Registrarse</Link>
+          )}
         </div>
       )}
     </nav>

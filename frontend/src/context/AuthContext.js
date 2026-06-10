@@ -16,6 +16,14 @@ export function AuthProvider({ children }) {
     return res.data.user;
   }, []);
 
+  const registro = useCallback(async (data) => {
+    const res = await api.post('/auth/registro/', data);
+    localStorage.setItem('token', res.data.token);
+    localStorage.setItem('user', JSON.stringify(res.data.user));
+    setUser(res.data.user);
+    return res.data.user;
+  }, []);
+
   const logout = useCallback(async () => {
     try { await api.post('/auth/logout/'); } catch {}
     localStorage.removeItem('token');
@@ -27,7 +35,7 @@ export function AuthProvider({ children }) {
   const esAdmin = user?.es_admin || user?.is_staff;
 
   return (
-    <AuthContext.Provider value={{ user, login, logout, esAdmin }}>
+    <AuthContext.Provider value={{ user, login, logout, registro, esAdmin }}>
       {children}
     </AuthContext.Provider>
   );
