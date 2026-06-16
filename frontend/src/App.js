@@ -10,6 +10,7 @@ import Pedidos from './pages/Pedidos';
 import AdminLayout from './pages/AdminLayout';
 import AdminDashboard from './pages/AdminDashboard';
 import AdminProductos from './pages/AdminProductos';
+import AdminMarcas from './pages/AdminMarcas';
 import AdminCategorias from './pages/AdminCategorias';
 import AdminUsuarios from './pages/AdminUsuarios';
 import AdminPedidos from './pages/AdminPedidos';
@@ -62,6 +63,7 @@ function AppRoutes() {
       <Route path="/admin" element={<RequireAdmin><AppLayout><AdminLayout /></AppLayout></RequireAdmin>}>
         <Route index element={<AdminDashboard />} />
         <Route path="productos" element={<AdminProductos />} />
+        <Route path="marcas" element={<AdminMarcas />} />
         <Route path="categorias" element={<AdminCategorias />} />
         <Route path="usuarios" element={<AdminUsuarios />} />
         <Route path="pedidos" element={<AdminPedidos />} />

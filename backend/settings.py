@@ -105,3 +105,29 @@ LOGGING = {
 
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 USE_X_FORWARDED_HOST = True
+
+# Al final del archivo, agregá:
+
+import os
+
+# Producción - cambiar a False solo en producción real
+DEBUG = True
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'localhost:3000', 'tu_usuario.pythonanywhere.com', 'www.distribuidorayaya.com.ar', 'distribuidorayaya.com.ar']
+
+# Static files
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'static'),
+]
+
+# Media files (imágenes de productos)
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+# CORS para que frontend y backend se hablen
+CORS_ALLOWED_ORIGINS = [
+    'http://localhost:3000',
+    'http://127.0.0.1:3000',
+    'https://tu_usuario.pythonanywhere.com',
+    'https://www.distribuidorayaya.com.ar',
+]

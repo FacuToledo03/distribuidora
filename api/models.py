@@ -2,11 +2,24 @@ from django.db import models
 from django.contrib.auth.models import User
 
 
-class Categoria(models.Model):
+class Marca(models.Model):
     nombre = models.CharField(max_length=100)
+    imagen = models.ImageField(upload_to='marcas/', blank=True, null=True)
 
     def __str__(self):
         return self.nombre
+
+    class Meta:
+        verbose_name = "Marca"
+        verbose_name_plural = "Marcas"
+
+
+class Categoria(models.Model):
+    nombre = models.CharField(max_length=100)
+    marca = models.ForeignKey(Marca, on_delete=models.CASCADE, related_name='categorias')
+
+    def __str__(self):
+        return f"{self.marca.nombre} - {self.nombre}"
 
     class Meta:
         verbose_name = "Categoría"
@@ -18,6 +31,7 @@ class Producto(models.Model):
     descripcion = models.TextField(blank=True)
     precio = models.DecimalField(max_digits=10, decimal_places=2)
     stock = models.PositiveIntegerField(default=0)
+    marca = models.ForeignKey(Marca, on_delete=models.SET_NULL, null=True, blank=True, related_name='productos')
     categoria = models.ForeignKey(Categoria, on_delete=models.SET_NULL, null=True, blank=True, related_name='productos')
     imagen = models.ImageField(upload_to='productos/', blank=True, null=True)
     activo = models.BooleanField(default=True)

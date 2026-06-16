@@ -17,11 +17,13 @@ function Modal({ title, onClose, children }) {
   );
 }
 
-const emptyForm = { nombre: '', descripcion: '', precio: '', stock: '', categoria: '', activo: true, es_nuevo: false };
+const emptyForm = { nombre: '', descripcion: '', precio: '', stock: '', marca: '', categoria: '', activo: true, es_nuevo: false };
 
 export default function AdminProductos() {
   const [productos, setProductos] = useState([]);
+  const [marcas, setMarcas] = useState([]);
   const [categorias, setCategorias] = useState([]);
+  const [categoriasFiltradas, setCategoriasFiltradas] = useState([]);
   const [loading, setLoading] = useState(true);
   const [modal, setModal] = useState(null);
   const [selected, setSelected] = useState(null);
@@ -35,11 +37,13 @@ export default function AdminProductos() {
 
   const cargar = async () => {
     setLoading(true);
-    const [pRes, cRes] = await Promise.all([
+    const [pRes, mRes, cRes] = await Promise.all([
       api.get('/productos/', { params: { busqueda: busqueda || undefined } }),
+      api.get('/marcas/'),
       api.get('/categorias/'),
     ]);
     setProductos(pRes.data.results || pRes.data);
+    setMarcas(mRes.data);
     setCategorias(cRes.data);
     setLoading(false);
   };
@@ -56,7 +60,13 @@ export default function AdminProductos() {
 
   const abrirEditar = (p) => {
     setSelected(p);
-    setForm({ nombre: p.nombre, descripcion: p.descripcion, precio: p.precio, stock: p.stock, categoria: p.categoria || '', activo: p.activo, es_nuevo: p.es_nuevo });
+    setForm({ nombre: p.nombre, descripcion: p.descripcion, precio: p.precio, stock: p.stock, marca: p.marca || '', categoria: p.categoria || '', activo: p.activo, es_nuevo: p.es_nuevo });
+    // Filtrar categorías por la marca del producto
+    if (p.marca) {
+      setCategoriasFiltradas(categorias.filter(c => c.marca === p.marca));
+    } else {
+      setCategoriasFiltradas([]);
+    }
     setImagenFile(null);
     setImagenPreview(p.imagen_url || null);
     setError('');
@@ -97,7 +107,7 @@ export default function AdminProductos() {
           await api.patch(`/productos/${selected.id}/`, formData, config);
         }
       } else {
-        const data = { ...form, categoria: form.categoria || null };
+        const data = { ...form, marca: form.marca || null, categoria: form.categoria || null };
         if (modal === 'crear') {
           await api.post('/productos/', data);
         } else {
@@ -153,6 +163,7 @@ export default function AdminProductos() {
               <tr>
                 <th>Imagen</th>
                 <th>Nombre</th>
+                <th>Marca</th>
                 <th>Categoría</th>
                 <th>Precio</th>
                 <th>Stock</th>
@@ -173,6 +184,7 @@ export default function AdminProductos() {
                     </div>
                   </td>
                   <td><strong>{p.nombre}</strong></td>
+                  <td>{p.marca_nombre || '—'}</td>
                   <td>{p.categoria_nombre || '—'}</td>
                   <td>${Number(p.precio).toLocaleString('es-AR')}</td>
                   <td><span className={stockClass(p.stock)}>{p.stock}</span></td>
@@ -244,10 +256,21 @@ export default function AdminProductos() {
               <input className={styles.input} type="number" value={form.stock} onChange={e => setForm({ ...form, stock: e.target.value })} placeholder="0" />
             </div>
             <div className={styles.field}>
+              <label className={styles.label}>Marca</label>
+              <select className={styles.input} value={form.marca} onChange={e => {
+                const marcaId = e.target.value;
+                setForm({ ...form, marca: marcaId, categoria: '' });
+                setCategoriasFiltradas(marcaId ? categorias.filter(c => c.marca === parseInt(marcaId)) : []);
+              }}>
+                <option value="">Sin marca</option>
+                {marcas.map(m => <option key={m.id} value={m.id}>{m.nombre}</option>)}
+              </select>
+            </div>
+            <div className={styles.field}>
               <label className={styles.label}>Categoría</label>
-              <select className={styles.input} value={form.categoria} onChange={e => setForm({ ...form, categoria: e.target.value })}>
-                <option value="">Sin categoría</option>
-                {categorias.map(c => <option key={c.id} value={c.id}>{c.nombre}</option>)}
+              <select className={styles.input} value={form.categoria} onChange={e => setForm({ ...form, categoria: e.target.value })} disabled={!form.marca}>
+                <option value="">{form.marca ? 'Sin categoría' : 'Primero seleccione una marca'}</option>
+                {(form.marca ? categorias.filter(c => c.marca === parseInt(form.marca)) : []).map(c => <option key={c.id} value={c.id}>{c.nombre}</option>)}
               </select>
             </div>
             <div className={styles.field}>

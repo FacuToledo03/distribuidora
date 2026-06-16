@@ -36,8 +36,8 @@ function ProductoCard({ producto }) {
           ? <img src={producto.imagen_url} alt={producto.nombre} className={styles.img} />
           : <div className={styles.noImg}>📦</div>
         }
-        {producto.categoria_nombre && (
-          <span className={styles.catBadge}>{producto.categoria_nombre}</span>
+        {producto.marca_nombre && (
+          <span className={styles.catBadge}>{producto.marca_nombre}</span>
         )}
         {stockBajo && !sinStock && (
           <span className={styles.stockAlerta}>⚠ Últimas {producto.stock}</span>
@@ -83,22 +83,33 @@ function ProductoCard({ producto }) {
 export default function Productos() {
   const [searchParams] = useSearchParams();
   const [productos, setProductos] = useState([]);
+  const [marcas, setMarcas] = useState([]);
   const [categorias, setCategorias] = useState([]);
+  const [categoriasFiltradas, setCategoriasFiltradas] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [filtro, setFiltro] = useState({ busqueda: '', categoria: searchParams.get('categoria') || '' });
+  const [filtro, setFiltro] = useState({ busqueda: '', marca: '', categoria: searchParams.get('categoria') || '' });
 
   const cargar = useCallback(async () => {
     setLoading(true);
     try {
       const params = {};
       if (filtro.busqueda) params.busqueda = filtro.busqueda;
+      if (filtro.marca) params.marca = filtro.marca;
       if (filtro.categoria) params.categoria = filtro.categoria;
-      const [pRes, cRes] = await Promise.all([
+      const [pRes, mRes, cRes] = await Promise.all([
         api.get('/productos/', { params }),
+        api.get('/marcas/'),
         api.get('/categorias/'),
       ]);
       setProductos(pRes.data.results || pRes.data);
+      setMarcas(mRes.data);
       setCategorias(cRes.data);
+      // Filtrar categorías por la marca seleccionada
+      if (filtro.marca) {
+        setCategoriasFiltradas(cRes.data.filter(c => c.marca === parseInt(filtro.marca)));
+      } else {
+        setCategoriasFiltradas([]);
+      }
     } finally {
       setLoading(false);
     }
@@ -123,11 +134,26 @@ export default function Productos() {
           />
           <select
             className={styles.select}
+            value={filtro.marca}
+            onChange={e => {
+              const marcaId = e.target.value;
+              setFiltro({ ...filtro, marca: marcaId, categoria: '' });
+              setCategoriasFiltradas(marcaId ? categorias.filter(c => c.marca === parseInt(marcaId)) : []);
+            }}
+          >
+            <option value="">Todas las marcas</option>
+            {marcas.map(m => (
+              <option key={m.id} value={m.id}>{m.nombre}</option>
+            ))}
+          </select>
+          <select
+            className={styles.select}
             value={filtro.categoria}
             onChange={e => setFiltro({ ...filtro, categoria: e.target.value })}
+            disabled={!filtro.marca}
           >
-            <option value="">Todas las categorías</option>
-            {categorias.map(c => (
+            <option value="">{filtro.marca ? 'Todas las categorías' : 'Primero seleccione una marca'}</option>
+            {categoriasFiltradas.map(c => (
               <option key={c.id} value={c.id}>{c.nombre}</option>
             ))}
           </select>

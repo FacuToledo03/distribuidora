@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User
-from .models import Categoria, Producto, Pedido, DetallePedido, PerfilCliente
+from .models import Marca, Categoria, Producto, Pedido, DetallePedido, PerfilCliente
 
 
 class PerfilClienteSerializer(serializers.ModelSerializer):
@@ -54,19 +54,49 @@ class CrearUsuarioSerializer(serializers.ModelSerializer):
         return user
 
 
-class CategoriaSerializer(serializers.ModelSerializer):
+class MarcaSerializer(serializers.ModelSerializer):
+    imagen_url = serializers.SerializerMethodField()
+    categorias = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Marca
+        fields = ['id', 'nombre', 'imagen', 'imagen_url', 'categorias']
+
+    def get_imagen_url(self, obj):
+        request = self.context.get('request')
+        if obj.imagen and request:
+            return request.build_absolute_uri(obj.imagen.url)
+        return None
+
+    def get_categorias(self, obj):
+        from .models import Categoria
+        categorias = Categoria.objects.filter(marca=obj)
+        return CategoriaListSerializer(categorias, many=True, context=self.context).data
+
+
+class CategoriaListSerializer(serializers.ModelSerializer):
+    """Serializer simple para listar categorías (sin marca anidada)"""
     class Meta:
         model = Categoria
         fields = ['id', 'nombre']
 
 
+class CategoriaSerializer(serializers.ModelSerializer):
+    marca_nombre = serializers.CharField(source='marca.nombre', read_only=True)
+
+    class Meta:
+        model = Categoria
+        fields = ['id', 'nombre', 'marca', 'marca_nombre']
+
+
 class ProductoSerializer(serializers.ModelSerializer):
+    marca_nombre = serializers.CharField(source='marca.nombre', read_only=True)
     categoria_nombre = serializers.CharField(source='categoria.nombre', read_only=True)
     imagen_url = serializers.SerializerMethodField()
 
     class Meta:
         model = Producto
-        fields = ['id', 'nombre', 'descripcion', 'precio', 'stock', 'categoria', 'categoria_nombre', 'imagen', 'imagen_url', 'activo', 'es_nuevo', 'creado_en']
+        fields = ['id', 'nombre', 'descripcion', 'precio', 'stock', 'marca', 'marca_nombre', 'categoria', 'categoria_nombre', 'imagen', 'imagen_url', 'activo', 'es_nuevo', 'creado_en']
 
     def get_imagen_url(self, obj):
         request = self.context.get('request')

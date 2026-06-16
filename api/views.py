@@ -9,9 +9,9 @@ from django.conf import settings
 import urllib.request
 import urllib.parse
 import threading
-from .models import Categoria, Producto, Pedido, DetallePedido, PerfilCliente, ItemCarrito
+from .models import Marca, Categoria, Producto, Pedido, DetallePedido, PerfilCliente, ItemCarrito
 from .serializers import (
-    UserSerializer, CrearUsuarioSerializer, CategoriaSerializer,
+    UserSerializer, CrearUsuarioSerializer, MarcaSerializer, CategoriaSerializer, CategoriaListSerializer,
     ProductoSerializer, PedidoSerializer, CrearPedidoSerializer
 )
 
@@ -135,11 +135,34 @@ def usuario_detail(request, pk):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
+# ─── MARCAS ─────────────────────────────────────────────────────────────────
+
+class MarcaViewSet(viewsets.ModelViewSet):
+    queryset = Marca.objects.prefetch_related('categorias')
+    serializer_class = MarcaSerializer
+
+    def get_permissions(self):
+        if self.action in ['list', 'retrieve']:
+            return [permissions.AllowAny()]
+        return [EsAdmin()]
+
+    def get_serializer_context(self):
+        context = super().get_serializer_context()
+        context['request'] = self.request
+        return context
+
+
 # ─── CATEGORÍAS ──────────────────────────────────────────────────────────────
 
 class CategoriaViewSet(viewsets.ModelViewSet):
-    queryset = Categoria.objects.all()
     serializer_class = CategoriaSerializer
+
+    def get_queryset(self):
+        qs = Categoria.objects.select_related('marca')
+        marca = self.request.query_params.get('marca')
+        if marca:
+            qs = qs.filter(marca_id=marca)
+        return qs
 
     def get_permissions(self):
         if self.action in ['list', 'retrieve']:
@@ -153,16 +176,19 @@ class ProductoViewSet(viewsets.ModelViewSet):
     serializer_class = ProductoSerializer
 
     def get_queryset(self):
-        qs = Producto.objects.all()
+        qs = Producto.objects.select_related('marca', 'categoria')
         if not (self.request.user.is_authenticated and (self.request.user.is_staff or self.request.user.is_superuser)):
             qs = qs.filter(activo=True)
+        marca = self.request.query_params.get('marca')
         categoria = self.request.query_params.get('categoria')
         busqueda = self.request.query_params.get('busqueda')
+        if marca:
+            qs = qs.filter(marca_id=marca)
         if categoria:
             qs = qs.filter(categoria_id=categoria)
         if busqueda:
             qs = qs.filter(nombre__icontains=busqueda)
-        return qs.order_by('nombre')
+        return qs.order_by('marca__nombre', 'categoria__nombre', 'nombre')
 
     def get_permissions(self):
         if self.action in ['list', 'retrieve']:
@@ -180,7 +206,7 @@ class ProductoViewSet(viewsets.ModelViewSet):
 @api_view(['GET'])
 def carrito_get(request):
     """Obtener el carrito del usuario"""
-    items = ItemCarrito.objects.filter(usuario=request.user).select_related('producto__categoria')
+    items = ItemCarrito.objects.filter(usuario=request.user).select_related('producto__marca', 'producto__categoria')
     resultado = []
     for item in items:
         p = item.producto
@@ -194,6 +220,7 @@ def carrito_get(request):
                 'precio': str(p.precio),
                 'stock': p.stock,
                 'imagen_url': imagen_url,
+                'marca_nombre': p.marca.nombre if p.marca else None,
                 'categoria_nombre': p.categoria.nombre if p.categoria else None,
             },
             'cantidad': item.cantidad,
