@@ -333,6 +333,13 @@
 
 .catIcon { font-size: 40px; }
 
+.marcaImg {
+  width: 80px;
+  height: 80px;
+  object-fit: contain;
+  border-radius: 12px;
+}
+
 .catNombre {
   font-size: 14px;
   font-weight: 700;

@@ -130,15 +130,9 @@ function SeccionNuevosProductos() {
   );
 }
 
-function SeccionCategorias() {
-  const [categorias, setCategorias] = useState([]);
+function SeccionMarcas() {
+  const [marcas, setMarcas] = useState([]);
   const navigate = useNavigate();
-
-  const ICONOS = {
-    'Bebidas': '🥤', 'Lácteos': '🥛', 'Almacén': '🛒', 'Limpieza': '🧹',
-    'Snacks': '🍿', 'Carnes': '🥩', 'Verduras': '🥦', 'Panadería': '🍞',
-    'Congelados': '🧊', 'Perfumería': '🧴',
-  };
 
   const COLORES = [
     '#e63946', '#3b82f6', '#22c55e', '#f59e0b',
@@ -146,26 +140,30 @@ function SeccionCategorias() {
   ];
 
   useEffect(() => {
-    api.get('/categorias/').then(res => setCategorias(res.data));
+    api.get('/marcas/').then(res => setMarcas(res.data));
   }, []);
 
-  if (!categorias.length) return null;
+  if (!marcas.length) return null;
 
   return (
     <section className={styles.seccion}>
       <div className={styles.seccionInner}>
-        <h2 className={styles.seccionTitulo}>Nuestras categorías</h2>
-        <p className={styles.seccionSub}>Encontrá todo lo que necesitás organizado por categoría</p>
+        <h2 className={styles.seccionTitulo}>Nuestras marcas</h2>
+        <p className={styles.seccionSub}>Encontrá tus productos favoritos de las mejores marcas</p>
         <div className={styles.catGrid}>
-          {categorias.map((cat, i) => (
+          {marcas.map((marca, i) => (
             <button
-              key={cat.id}
+              key={marca.id}
               className={styles.catCard}
-              onClick={() => navigate(`/productos?categoria=${cat.id}`)}
+              onClick={() => navigate(`/productos?marca=${marca.id}`)}
               style={{ '--cat-color': COLORES[i % COLORES.length] }}
             >
-              <span className={styles.catIcon}>{ICONOS[cat.nombre] || '📦'}</span>
-              <span className={styles.catNombre}>{cat.nombre}</span>
+              {marca.imagen_url ? (
+                <img src={marca.imagen_url} alt={marca.nombre} className={styles.marcaImg} />
+              ) : (
+                <span className={styles.catIcon}>🏢</span>
+              )}
+              <span className={styles.catNombre}>{marca.nombre}</span>
             </button>
           ))}
         </div>
@@ -195,7 +193,7 @@ export default function Home() {
     <div className={styles.page}>
       <Carrusel />
       <SeccionNuevosProductos />
-      <SeccionCategorias />
+      <SeccionMarcas />
       <SeccionMapa />
     </div>
   );
