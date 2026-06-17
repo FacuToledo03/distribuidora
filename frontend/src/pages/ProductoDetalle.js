@@ -14,6 +14,7 @@ export default function ProductoDetalle() {
   const [agregado, setAgregado] = useState(false);
 
   useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
     api
       .get(`/productos/${id}/`)
       .then((res) => setProducto(res.data))

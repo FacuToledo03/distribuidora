@@ -87,7 +87,11 @@ export default function Productos() {
   const [categorias, setCategorias] = useState([]);
   const [categoriasFiltradas, setCategoriasFiltradas] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [filtro, setFiltro] = useState({ busqueda: '', marca: '', categoria: searchParams.get('categoria') || '' });
+  const [filtro, setFiltro] = useState({
+    busqueda: '',
+    marca: searchParams.get('marca') || '',
+    categoria: searchParams.get('categoria') || ''
+  });
 
   const cargar = useCallback(async () => {
     setLoading(true);
@@ -114,6 +118,16 @@ export default function Productos() {
       setLoading(false);
     }
   }, [filtro]);
+
+  // Scroll al inicio al cargar
+  useEffect(() => { window.scrollTo({ top: 0, behavior: 'smooth' }); }, []);
+
+  // Actualizar filtro si cambian los params de URL
+  useEffect(() => {
+    const marcaParam = searchParams.get('marca') || '';
+    const categoriaParam = searchParams.get('categoria') || '';
+    setFiltro(prev => ({ ...prev, marca: marcaParam, categoria: categoriaParam }));
+  }, [searchParams]);
 
   useEffect(() => { cargar(); }, [cargar]);
 

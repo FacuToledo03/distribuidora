@@ -189,6 +189,8 @@ function SeccionMapa() {
 }
 
 export default function Home() {
+  useEffect(() => { window.scrollTo({ top: 0, behavior: 'smooth' }); }, []);
+
   return (
     <div className={styles.page}>
       <Carrusel />
