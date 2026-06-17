@@ -1,20 +1,20 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../services/api';
-import carruselPeloNuevo from '../assets/carrusel-pelo-nuevo.jpeg';
-import carruselExtraAcida from '../assets/carrusel.extra-acida.jpeg';
+import carruselOssono from '../assets/carrusel-ossono.jpg';
+import carruselVioleta from '../assets/carrusel-violeta.jpg';
 import carruselAquaStyling from '../assets/carrusel-aqua-styling.jpeg';
 import styles from './Home.module.css';
 
 // ─── CARRUSEL — reemplazá las URLs por tus imágenes reales ───────────────────
 const SLIDES = [
   {
-    img: carruselPeloNuevo,
+    img: carruselOssono,
     titulo: '',
     subtitulo: '',
   },
   {
-    img: carruselExtraAcida,
+    img: carruselVioleta,
     titulo: '',
     subtitulo: '',
   },
