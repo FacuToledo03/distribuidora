@@ -2,13 +2,13 @@ import React, { useState } from 'react';
 import styles from './WppButton.module.css';
 
 // ─── CONFIGURACIÓN ────────────────────────────────────────────────────────────
-const WPP_NUMERO = '5493468640663'; // Reemplazá con el número real
+const WPP_NUMERO = '5493468-611074'; // Reemplazá con el número real
 const WPP_MENSAJE = '¡Hola! Me comunico desde la tienda online. Quería consultar sobre un pedido.';
 // ─────────────────────────────────────────────────────────────────────────────
 
 export default function WppButton() {
   const [tooltip, setTooltip] = useState(false);
-  const url = `https://wa.me/${5493468640663}?text=${encodeURIComponent(WPP_MENSAJE)}`;
+  const url = `https://wa.me/${5493468611074}?text=${encodeURIComponent(WPP_MENSAJE)}`;
 
   return (
     <div className={styles.wrapper}>
