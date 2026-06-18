@@ -67,6 +67,7 @@ export default function Navbar() {
                       <strong>{user?.username}</strong>
                       <small>{esAdmin ? 'Administrador' : 'Cliente'}</small>
                     </div>
+                    <Link to="/mi-perfil" className={styles.dropdownLink} onClick={() => setMenuOpen(false)}>Mi perfil</Link>
                     <button onClick={handleLogout} className={styles.logoutBtn}>Cerrar sesión</button>
                   </>
                 ) : (

@@ -134,9 +134,20 @@ def google_login_view(request):
         return Response({'error': 'Token de Google inválido.'}, status=status.HTTP_400_BAD_REQUEST)
 
 
-@api_view(['GET'])
+@api_view(['GET', 'PUT'])
 def perfil_view(request):
-    return Response(UserSerializer(request.user).data)
+    if request.method == 'GET':
+        return Response(UserSerializer(request.user).data)
+    user = request.user
+    data = request.data
+    user.first_name = data.get('first_name', user.first_name)
+    user.last_name = data.get('last_name', user.last_name)
+    user.save()
+    perfil, _ = PerfilCliente.objects.get_or_create(usuario=user)
+    perfil.telefono = data.get('telefono', perfil.telefono)
+    perfil.direccion = data.get('direccion', perfil.direccion)
+    perfil.save()
+    return Response(UserSerializer(user).data)
 
 
 # ─── USUARIOS (solo admin) ───────────────────────────────────────────────────

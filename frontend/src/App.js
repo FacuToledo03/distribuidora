@@ -18,6 +18,7 @@ import AdminPedidos from './pages/AdminPedidos';
 import ProductoDetalle from './pages/ProductoDetalle';
 import Contacto from './pages/Contacto';
 import Home from './pages/Home';
+import MiPerfil from './pages/MiPerfil';
 import WppButton from './components/WppButton';
 import Footer from './components/Footer';
 
@@ -60,6 +61,7 @@ function AppRoutes() {
       <Route path="/pedidos" element={<RequireAuth><AppLayout><Pedidos /></AppLayout></RequireAuth>} />
       <Route path="/productos/:id" element={<AppLayout><ProductoDetalle /></AppLayout>} />
       <Route path="/contacto" element={<AppLayout><Contacto /></AppLayout>} />
+      <Route path="/mi-perfil" element={<RequireAuth><AppLayout><MiPerfil /></AppLayout></RequireAuth>} />
 
       <Route path="/admin" element={<RequireAdmin><AppLayout><AdminLayout /></AppLayout></RequireAdmin>}>
         <Route index element={<AdminDashboard />} />
