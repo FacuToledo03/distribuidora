@@ -23,10 +23,8 @@ export function CartProvider({ children }) {
   useEffect(() => {
     if (localStorage.getItem('token')) {
       api.get('/carrito/').then(res => {
-        if (res.data.length > 0) {
-          setItems(res.data);
-          localStorage.setItem('carrito', JSON.stringify(res.data));
-        }
+        setItems(res.data);
+        localStorage.setItem('carrito', JSON.stringify(res.data));
       }).catch(() => {});
     }
   }, []);
