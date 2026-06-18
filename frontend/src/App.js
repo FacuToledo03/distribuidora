@@ -49,10 +49,10 @@ function AppRoutes() {
 
   return (
     <Routes>
-      <Route path="/login" element={user ? <Navigate to={esAdmin ? '/admin' : '/home'} /> : <AppLayout><Login /></AppLayout>} />
+      <Route path="/login" element={user ? <Navigate to={esAdmin ? '/admin' : '/'} /> : <AppLayout><Login /></AppLayout>} />
 
-      <Route path="/" element={<AppLayout><Navigate to={esAdmin ? '/admin' : '/home'} /></AppLayout>} />
-      <Route path="/home" element={<AppLayout><Home /></AppLayout>} />
+      <Route path="/" element={<AppLayout><Home /></AppLayout>} />
+      <Route path="/home" element={<Navigate to="/" replace />} />
 
       <Route path="/productos" element={<AppLayout><Productos /></AppLayout>} />
       <Route path="/carrito" element={<AppLayout><Carrito /></AppLayout>} />
