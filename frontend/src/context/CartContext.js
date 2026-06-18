@@ -19,14 +19,24 @@ export function CartProvider({ children }) {
     localStorage.setItem('carrito', JSON.stringify(items));
   }, [items]);
 
-  // Cargar desde servidor al iniciar si hay sesión activa
+  // Cargar desde servidor al iniciar si hay sesión activa, limpiar si no hay
   useEffect(() => {
     if (localStorage.getItem('token')) {
       api.get('/carrito/').then(res => {
         setItems(res.data);
         localStorage.setItem('carrito', JSON.stringify(res.data));
       }).catch(() => {});
+    } else {
+      setItems([]);
+      localStorage.removeItem('carrito');
     }
+  }, []);
+
+  // Limpiar carrito cuando se cierra sesión
+  useEffect(() => {
+    const handleLogout = () => setItems([]);
+    window.addEventListener('logout', handleLogout);
+    return () => window.removeEventListener('logout', handleLogout);
   }, []);
 
   // Sincronizar con el servidor con debounce (espera 1s después del último cambio)
@@ -87,10 +97,12 @@ export function CartProvider({ children }) {
     });
   }, [sincronizarServidor]);
 
-  const limpiar = useCallback(async () => {
+  const limpiar = useCallback(async (sincronizar = true) => {
     setItems([]);
     localStorage.removeItem('carrito');
-    try { await api.delete('/carrito/limpiar/'); } catch {}
+    if (sincronizar) {
+      try { await api.delete('/carrito/limpiar/'); } catch {}
+    }
   }, []);
 
   const total = items.reduce((acc, i) => acc + Number(i.producto.precio) * i.cantidad, 0);
