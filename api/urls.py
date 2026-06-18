@@ -13,6 +13,7 @@ urlpatterns = [
     path('auth/registro/', views.registro_view, name='registro'),
     path('auth/logout/', views.logout_view, name='logout'),
     path('auth/perfil/', views.perfil_view, name='perfil'),
+    path('auth/google/', views.google_login_view, name='google-login'),
 
     # Usuarios (admin)
     path('usuarios/', views.usuarios_list, name='usuarios-list'),

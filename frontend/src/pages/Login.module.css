@@ -141,6 +141,26 @@
   accent-color: var(--brand);
 }
 
+.googleBtn {
+  display: flex;
+  justify-content: center;
+  margin: 16px 0 24px;
+}
+
+.publicLink {
+  display: block;
+  text-align: center;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--brand);
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: underline;
+  margin: 0 auto;
+  padding: 0;
+}
+
 @media (max-width: 480px) {
   .card { padding: 32px 24px; }
   .title { font-size: 24px; }

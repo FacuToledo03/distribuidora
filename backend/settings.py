@@ -124,3 +124,13 @@ USE_X_FORWARDED_HOST = True
 
 WHATSAPP_ADMIN_NUMERO = os.environ.get('WHATSAPP_ADMIN_NUMERO', '')
 WHATSAPP_CALLMEBOT_KEY = os.environ.get('WHATSAPP_CALLMEBOT_KEY', '')
+
+GOOGLE_CLIENT_ID = os.environ.get('GOOGLE_CLIENT_ID', '910190860859-rm4s10glodnfvkd5rr687p13e9nbeucs.apps.googleusercontent.com')
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER', '')
+EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD', '')
+EMAIL_NOTIFICACION_ADMIN = os.environ.get('EMAIL_NOTIFICACION_ADMIN', 'yayaperfumayorista@gmail.com')

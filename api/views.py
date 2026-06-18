@@ -6,9 +6,12 @@ from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
 from django.db import transaction
 from django.conf import settings
+from django.core.mail import send_mail
 import urllib.request
 import urllib.parse
 import threading
+from google.oauth2 import id_token
+from google.auth.transport import requests as google_requests
 from .models import Marca, Categoria, Producto, Pedido, DetallePedido, PerfilCliente, ItemCarrito
 from .serializers import (
     UserSerializer, CrearUsuarioSerializer, MarcaSerializer, CategoriaSerializer, CategoriaListSerializer,
@@ -81,6 +84,54 @@ def registro_view(request):
 def logout_view(request):
     request.user.auth_token.delete()
     return Response({'mensaje': 'Sesión cerrada.'})
+
+
+@api_view(['POST'])
+@permission_classes([permissions.AllowAny])
+def google_login_view(request):
+    credential = request.data.get('credential')
+    if not credential:
+        return Response({'error': 'Token de Google requerido.'}, status=status.HTTP_400_BAD_REQUEST)
+    try:
+        idinfo = id_token.verify_oauth2_token(
+            credential,
+            google_requests.Request(),
+            settings.GOOGLE_CLIENT_ID
+        )
+        email = idinfo.get('email')
+        first_name = idinfo.get('given_name', '')
+        last_name = idinfo.get('family_name', '')
+        if not email:
+            return Response({'error': 'No se pudo obtener el email de Google.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        user, created = User.objects.get_or_create(
+            username=email,
+            defaults={'email': email, 'first_name': first_name, 'last_name': last_name}
+        )
+        if created:
+            user.set_unusable_password()
+            user.save()
+            PerfilCliente.objects.get_or_create(usuario=user)
+            def enviar_notificacion():
+                try:
+                    send_mail(
+                        subject='Nueva cuenta creada en Yaya Mayorista',
+                        message=f'Se registró un nuevo usuario:\n\nNombre: {first_name} {last_name}\nEmail: {email}',
+                        from_email=settings.EMAIL_HOST_USER,
+                        recipient_list=[settings.EMAIL_NOTIFICACION_ADMIN],
+                        fail_silently=True,
+                    )
+                except Exception:
+                    pass
+            threading.Thread(target=enviar_notificacion, daemon=True).start()
+
+        token, _ = Token.objects.get_or_create(user=user)
+        return Response({
+            'token': token.key,
+            'user': UserSerializer(user).data
+        })
+    except ValueError as e:
+        return Response({'error': 'Token de Google inválido.'}, status=status.HTTP_400_BAD_REQUEST)
 
 
 @api_view(['GET'])

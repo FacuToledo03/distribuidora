@@ -1,5 +1,6 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { GoogleOAuthProvider } from '@react-oauth/google';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { CartProvider } from './context/CartContext';
 import Navbar from './components/Navbar';
@@ -76,12 +77,14 @@ function AppRoutes() {
 
 export default function App() {
   return (
-    <BrowserRouter>
-      <AuthProvider>
-        <CartProvider>
-          <AppRoutes />
-        </CartProvider>
-      </AuthProvider>
-    </BrowserRouter>
+    <GoogleOAuthProvider clientId="910190860859-rm4s10glodnfvkd5rr687p13e9nbeucs.apps.googleusercontent.com">
+      <BrowserRouter>
+        <AuthProvider>
+          <CartProvider>
+            <AppRoutes />
+          </CartProvider>
+        </AuthProvider>
+      </BrowserRouter>
+    </GoogleOAuthProvider>
   );
 }
