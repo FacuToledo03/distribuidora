@@ -3,9 +3,9 @@ import os
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = 'django-insecure-cambia-esto-en-produccion-usa-una-clave-segura'
+SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-cambia-esto-en-produccion-usa-una-clave-segura')
 
-DEBUG = True
+DEBUG = os.environ.get('DEBUG', 'False') == 'True'
 
 ALLOWED_HOSTS = ['*']
 
@@ -52,12 +52,27 @@ TEMPLATES = [
     },
 ]
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+# ─── BASE DE DATOS ────────────────────────────────────────────────────────────
+# Si existen las variables de entorno de PostgreSQL, las usa (producción/servidor).
+# Si no, usa SQLite (para desarrollo local sin configurar nada extra).
+if os.environ.get('DB_NAME'):
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': os.environ.get('DB_NAME'),
+            'USER': os.environ.get('DB_USER'),
+            'PASSWORD': os.environ.get('DB_PASSWORD'),
+            'HOST': os.environ.get('DB_HOST', 'localhost'),
+            'PORT': os.environ.get('DB_PORT', '5432'),
+        }
     }
-}
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
+    }
 
 AUTH_PASSWORD_VALIDATORS = []
 
@@ -67,6 +82,9 @@ USE_I18N = True
 USE_TZ = True
 
 STATIC_URL = 'static/'
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
@@ -83,11 +101,10 @@ REST_FRAMEWORK = {
 
 CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOW_CREDENTIALS = True
-CSRF_TRUSTED_ORIGINS = ['https://distribuidora-gules.vercel.app']
-
-
-STATIC_ROOT = BASE_DIR / 'staticfiles'
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+CSRF_TRUSTED_ORIGINS = os.environ.get(
+    'CSRF_TRUSTED_ORIGINS',
+    'https://distribuidora-gules.vercel.app,https://www.distribuidorayaya.com.ar,https://distribuidorayaya.com.ar'
+).split(',')
 
 LOGGING = {
     'version': 1,
@@ -99,35 +116,12 @@ LOGGING = {
     },
     'root': {
         'handlers': ['console'],
-        'level': 'DEBUG',
+        'level': 'INFO',
     },
 }
 
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 USE_X_FORWARDED_HOST = True
 
-# Al final del archivo, agregá:
-
-import os
-
-# Producción - cambiar a False solo en producción real
-DEBUG = True
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'localhost:3000', 'tu_usuario.pythonanywhere.com', 'www.distribuidorayaya.com.ar', 'distribuidorayaya.com.ar']
-
-# Static files
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'static'),
-]
-
-# Media files (imágenes de productos)
-MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
-
-# CORS para que frontend y backend se hablen
-CORS_ALLOWED_ORIGINS = [
-    'http://localhost:3000',
-    'http://127.0.0.1:3000',
-    'https://tu_usuario.pythonanywhere.com',
-    'https://www.distribuidorayaya.com.ar',
-]
+WHATSAPP_ADMIN_NUMERO = os.environ.get('WHATSAPP_ADMIN_NUMERO', '')
+WHATSAPP_CALLMEBOT_KEY = os.environ.get('WHATSAPP_CALLMEBOT_KEY', '')
