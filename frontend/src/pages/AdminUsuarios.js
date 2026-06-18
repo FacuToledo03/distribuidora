@@ -115,10 +115,10 @@ export default function AdminUsuarios() {
           <table className={styles.table}>
             <thead>
               <tr>
-                <th>Usuario</th>
                 <th>Nombre</th>
                 <th>Email</th>
                 <th>Teléfono</th>
+                <th>Ciudad</th>
                 <th>Rol</th>
                 <th>Acciones</th>
               </tr>
@@ -126,10 +126,10 @@ export default function AdminUsuarios() {
             <tbody>
               {usuarios.map(u => (
                 <tr key={u.id}>
-                  <td><strong>{u.username}</strong></td>
                   <td>{[u.first_name, u.last_name].filter(Boolean).join(' ') || '—'}</td>
                   <td>{u.email || '—'}</td>
                   <td>{u.perfil?.telefono || '—'}</td>
+                  <td>{u.perfil?.ciudad && u.perfil?.provincia ? `${u.perfil.ciudad}, ${u.perfil.provincia}` : u.perfil?.ciudad || '—'}</td>
                   <td>
                     <span className={styles.rolBadge} style={u.es_admin
                       ? { background: 'rgba(245,158,11,0.1)', color: '#d97706' }
