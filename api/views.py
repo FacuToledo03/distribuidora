@@ -204,6 +204,7 @@ class ProductoViewSet(viewsets.ModelViewSet):
 # ─── CARRITO ─────────────────────────────────────────────────────────────────
 
 @api_view(['GET'])
+@permission_classes([permissions.IsAuthenticated])
 def carrito_get(request):
     """Obtener el carrito del usuario"""
     items = ItemCarrito.objects.filter(usuario=request.user).select_related('producto__marca', 'producto__categoria')
@@ -229,6 +230,7 @@ def carrito_get(request):
 
 
 @api_view(['POST'])
+@permission_classes([permissions.IsAuthenticated])
 def carrito_sync(request):
     """Sincronizar carrito completo desde el cliente"""
     items = request.data.get('items', [])
@@ -249,6 +251,7 @@ def carrito_sync(request):
 
 
 @api_view(['DELETE'])
+@permission_classes([permissions.IsAuthenticated])
 def carrito_limpiar(request):
     """Limpiar carrito del usuario"""
     ItemCarrito.objects.filter(usuario=request.user).delete()

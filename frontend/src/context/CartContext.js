@@ -19,6 +19,18 @@ export function CartProvider({ children }) {
     localStorage.setItem('carrito', JSON.stringify(items));
   }, [items]);
 
+  // Cargar desde servidor al iniciar si hay sesión activa
+  useEffect(() => {
+    if (localStorage.getItem('token')) {
+      api.get('/carrito/').then(res => {
+        if (res.data.length > 0) {
+          setItems(res.data);
+          localStorage.setItem('carrito', JSON.stringify(res.data));
+        }
+      }).catch(() => {});
+    }
+  }, []);
+
   // Sincronizar con el servidor con debounce (espera 1s después del último cambio)
   const sincronizarServidor = useCallback((itemsActuales) => {
     if (syncTimer.current) clearTimeout(syncTimer.current);
