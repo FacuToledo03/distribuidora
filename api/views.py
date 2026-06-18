@@ -146,6 +146,8 @@ def perfil_view(request):
     perfil, _ = PerfilCliente.objects.get_or_create(usuario=user)
     perfil.telefono = data.get('telefono', perfil.telefono)
     perfil.direccion = data.get('direccion', perfil.direccion)
+    perfil.ciudad = data.get('ciudad', perfil.ciudad)
+    perfil.provincia = data.get('provincia', perfil.provincia)
     perfil.save()
     return Response(UserSerializer(user).data)
 

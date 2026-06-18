@@ -92,6 +92,8 @@ class PerfilCliente(models.Model):
     usuario = models.OneToOneField(User, on_delete=models.CASCADE, related_name='perfil')
     telefono = models.CharField(max_length=30, blank=True)
     direccion = models.TextField(blank=True)
+    ciudad = models.CharField(max_length=100, blank=True)
+    provincia = models.CharField(max_length=100, blank=True)
     creado_en = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):

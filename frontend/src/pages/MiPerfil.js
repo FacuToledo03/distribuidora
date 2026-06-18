@@ -1,11 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import api from '../services/api';
-import { useAuth } from '../context/AuthContext';
 import styles from './MiPerfil.module.css';
 
 export default function MiPerfil() {
-  const { user, setUser } = useAuth();
-  const [form, setForm] = useState({ first_name: '', last_name: '', telefono: '', direccion: '' });
+  const [form, setForm] = useState({ first_name: '', last_name: '', telefono: '', direccion: '', ciudad: '', provincia: '' });
   const [loading, setLoading] = useState(false);
   const [exito, setExito] = useState(false);
   const [error, setError] = useState('');
@@ -15,8 +13,10 @@ export default function MiPerfil() {
       setForm({
         first_name: res.data.first_name || '',
         last_name: res.data.last_name || '',
-        telefono: res.data.telefono || '',
-        direccion: res.data.direccion || '',
+        telefono: res.data.perfil?.telefono || '',
+        direccion: res.data.perfil?.direccion || '',
+        ciudad: res.data.perfil?.ciudad || '',
+        provincia: res.data.perfil?.provincia || '',
       });
     });
   }, []);
@@ -64,7 +64,18 @@ export default function MiPerfil() {
 
           <div className={styles.field}>
             <label className={styles.label}>Dirección</label>
-            <input className={styles.input} value={form.direccion} onChange={e => setForm({ ...form, direccion: e.target.value })} placeholder="Tu dirección" />
+            <input className={styles.input} value={form.direccion} onChange={e => setForm({ ...form, direccion: e.target.value })} placeholder="Calle y número" />
+          </div>
+
+          <div className={styles.row}>
+            <div className={styles.field}>
+              <label className={styles.label}>Ciudad</label>
+              <input className={styles.input} value={form.ciudad} onChange={e => setForm({ ...form, ciudad: e.target.value })} placeholder="Tu ciudad" />
+            </div>
+            <div className={styles.field}>
+              <label className={styles.label}>Provincia</label>
+              <input className={styles.input} value={form.provincia} onChange={e => setForm({ ...form, provincia: e.target.value })} placeholder="Tu provincia" />
+            </div>
           </div>
 
           <button type="submit" className={styles.btn} disabled={loading}>

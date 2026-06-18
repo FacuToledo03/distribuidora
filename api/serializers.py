@@ -6,7 +6,7 @@ from .models import Marca, Categoria, Producto, Pedido, DetallePedido, PerfilCli
 class PerfilClienteSerializer(serializers.ModelSerializer):
     class Meta:
         model = PerfilCliente
-        fields = ['telefono', 'direccion']
+        fields = ['telefono', 'direccion', 'ciudad', 'provincia']
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -25,6 +25,8 @@ class CrearUsuarioSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True, min_length=4)
     telefono = serializers.CharField(required=False, allow_blank=True)
     direccion = serializers.CharField(required=False, allow_blank=True)
+    ciudad = serializers.CharField(required=False, allow_blank=True)
+    provincia = serializers.CharField(required=False, allow_blank=True)
     es_admin = serializers.BooleanField(required=False, default=False)
 
     class Meta:
