@@ -140,6 +140,18 @@
   font-size: 13px;
 }
 
+.minimo {
+  background: #fff7ed;
+  border: 1px solid #fdba74;
+  color: #9a3412;
+  padding: 12px 14px;
+  border-radius: 8px;
+  font-size: 13px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
 .confirmarBtn {
   background: linear-gradient(135deg, var(--brand), var(--brand-dark));
   color: var(--dark);

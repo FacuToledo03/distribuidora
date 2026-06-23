@@ -1,3 +1,17 @@
+.topBanner {
+  background: linear-gradient(135deg, #f8b4c4, #f2d1d9);
+  text-align: center;
+  padding: 8px 16px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--dark);
+  letter-spacing: 0.2px;
+}
+
+.topBannerText {
+  display: inline-block;
+}
+
 .navbar {
   background: linear-gradient(135deg, rgba(243,182,226,0.96), rgba(191,236,228,0.96));
   backdrop-filter: blur(16px);

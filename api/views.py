@@ -343,6 +343,13 @@ def pedidos_list(request):
     items = serializer.validated_data['items']
     notas = serializer.validated_data.get('notas', '')
 
+    total_preliminar = sum(item['producto'].precio * int(item['cantidad']) for item in items)
+    COMPRA_MINIMA = 200000
+    if total_preliminar < COMPRA_MINIMA:
+        return Response({
+            'error': f'El pedido mínimo mayorista es de ${COMPRA_MINIMA:,}'.replace(',', '.')
+        }, status=status.HTTP_400_BAD_REQUEST)
+
     with transaction.atomic():
         pedido = Pedido.objects.create(cliente=request.user, notas=notas)
         total = 0

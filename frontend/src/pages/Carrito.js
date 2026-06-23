@@ -5,6 +5,8 @@ import { useAuth } from '../context/AuthContext';
 import api from '../services/api';
 import styles from './Carrito.module.css';
 
+const COMPRA_MINIMA = 200000;
+
 export default function Carrito() {
   const { items, quitar, actualizarCantidad, limpiar, total } = useCart();
   const { user, esAdmin } = useAuth();
@@ -12,6 +14,8 @@ export default function Carrito() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const navigate = useNavigate();
+  const faltante = Math.max(0, COMPRA_MINIMA - total);
+  const puedeConfirmar = total >= COMPRA_MINIMA;
 
   const handleConfirmar = async () => {
     if (esAdmin) {
@@ -117,8 +121,14 @@ export default function Carrito() {
             onChange={e => setNotas(e.target.value)}
             rows={3}
           />
+          {!puedeConfirmar && (
+            <div className={styles.minimo}>
+              <strong>Compra mínima mayorista: ${COMPRA_MINIMA.toLocaleString('es-AR')}</strong>
+              <span>Te faltan ${faltante.toLocaleString('es-AR')} para poder confirmar el pedido.</span>
+            </div>
+          )}
           {error && <div className={styles.error}>{error}</div>}
-          <button className={styles.confirmarBtn} onClick={handleConfirmar} disabled={loading}>
+          <button className={styles.confirmarBtn} onClick={handleConfirmar} disabled={loading || !puedeConfirmar}>
             {loading ? 'Confirmando...' : '✓ Confirmar pedido'}
           </button>
           <Link to="/productos" className={styles.seguirBtn}>← Seguir comprando</Link>
