@@ -25,7 +25,7 @@ export default function Navbar() {
   return (
     <>
       <div className={styles.topBanner}>
-        <span className={styles.topBannerText}>Compra mínima de $200.000</span>
+        <span className={styles.topBannerText}>COMPRA MÍNIMA DE $200.000</span>
       </div>
       <nav className={styles.navbar}>
         <div className={styles.inner}>

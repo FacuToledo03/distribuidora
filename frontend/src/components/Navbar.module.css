@@ -3,9 +3,9 @@
   text-align: center;
   padding: 8px 16px;
   font-size: 13px;
-  font-weight: 600;
-  color: var(--dark);
-  letter-spacing: 0.2px;
+  font-weight: 800;
+  color: #000;
+  letter-spacing: 0.3px;
 }
 
 .topBannerText {
